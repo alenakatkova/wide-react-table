@@ -1,0 +1,14 @@
+.app {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.app__title {
+  margin: 0;
+}
+
+.app__description {
+  color: #666;
+}
