@@ -28,6 +28,18 @@ Run linting:
 pnpm lint
 ```
 
+Check formatting:
+
+```bash
+pnpm format:check
+```
+
+Run tests:
+
+```bash
+pnpm test:run
+```
+
 Create a production build:
 
 ```bash
