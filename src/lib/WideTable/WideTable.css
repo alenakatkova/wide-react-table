@@ -1,0 +1,23 @@
+.wide-table-container {
+  width: 100%;
+
+  /* Allow horizontal scrolling for wide tables */
+  overflow-x: auto;
+}
+
+.wide-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.wide-table th,
+.wide-table td {
+  padding: 0.75rem;
+  border: 1px solid #dcdcdc;
+}
+
+.wide-table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
