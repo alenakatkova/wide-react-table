@@ -6,7 +6,11 @@ The project investigates how to keep wide tables responsive and practical while 
 
 ## Status
 
-Work in progress. The initial focus is the table core and performance with realistic wide datasets.
+Work in progress. Typed column definitions and basic table rendering are implemented. The next focus is wide-table behavior and performance with realistic datasets.
+
+## Tech stack
+
+React, TypeScript, Vite, Vitest, React Testing Library, ESLint and Prettier.
 
 ## Development
 
