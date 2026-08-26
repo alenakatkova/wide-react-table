@@ -16,6 +16,7 @@ function App() {
           columns={sampleColumns}
           rows={sampleRows}
           getRowKey={(row) => row.id}
+          defaultColumnWidth={125}
         />
       </section>
     </main>

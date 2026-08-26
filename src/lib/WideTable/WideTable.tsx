@@ -2,6 +2,8 @@ import './WideTable.css'
 import type { WideTableProps } from './types'
 import type { ReactNode } from 'react'
 
+const FALLBACK_DEFAULT_COLUMN_WIDTH = 100
+
 function renderCellValue(value: unknown): ReactNode {
   if (value === null || value === undefined) {
     return ''
@@ -23,18 +25,29 @@ function renderCellValue(value: unknown): ReactNode {
   return String(value)
 }
 
-export function WideTable<T>({ columns, rows, getRowKey }: WideTableProps<T>) {
+export function WideTable<T>({
+  columns,
+  rows,
+  getRowKey,
+  defaultColumnWidth = FALLBACK_DEFAULT_COLUMN_WIDTH,
+}: WideTableProps<T>) {
+  const tableWidth = columns.reduce((totalWidth, column) => {
+    return totalWidth + (column.width ?? defaultColumnWidth)
+  }, 0)
+
   return (
     <div className="wide-table-container">
-      <table className="wide-table">
+      <table className="wide-table" style={{ width: tableWidth }}>
+        <colgroup>
+          {columns.map((column) => (
+            <col key={column.key} width={column.width ?? defaultColumnWidth} />
+          ))}
+        </colgroup>
+
         <thead>
           <tr>
             {columns.map((column) => (
-              <th
-                key={column.key}
-                style={{ minWidth: column.minWidth ? column.minWidth : 'auto' }}
-                scope="col"
-              >
+              <th key={column.key} scope="col">
                 {column.title}
               </th>
             ))}
