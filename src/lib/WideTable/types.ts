@@ -3,7 +3,7 @@ import type { Key } from 'react'
 export interface WideTableColumn<T> {
   key: Extract<keyof T, string>
   title: string
-  width?: number
+  minWidth?: number
 }
 
 export interface WideTableProps<T> {

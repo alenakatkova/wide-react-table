@@ -12,3 +12,11 @@
 .app__description {
   color: #666;
 }
+
+.app__demo {
+  margin-top: 2rem;
+}
+
+.app__demo h2 {
+  margin-bottom: 1rem;
+}

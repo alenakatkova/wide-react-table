@@ -30,7 +30,11 @@ export function WideTable<T>({ columns, rows, getRowKey }: WideTableProps<T>) {
         <thead>
           <tr>
             {columns.map((column) => (
-              <th key={column.key} style={{ width: column.width }} scope="col">
+              <th
+                key={column.key}
+                style={{ minWidth: column.minWidth ? column.minWidth : 'auto' }}
+                scope="col"
+              >
                 {column.title}
               </th>
             ))}
