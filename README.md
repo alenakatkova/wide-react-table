@@ -6,11 +6,16 @@ The project investigates how to keep wide tables responsive and practical while 
 
 ## Status
 
-Work in progress. Typed column definitions and basic table rendering are implemented. The next focus is wide-table behavior and performance with realistic datasets.
+Work in progress. Typed column definitions, basic table rendering, fixed column widths and a scrollable container are implemented. The next focus is wide-table behavior and performance with realistic datasets.
 
 ## Tech stack
 
 React, TypeScript, Vite, Vitest, React Testing Library, ESLint and Prettier.
+
+## Project structure
+
+- `src/lib/` contains the library. `src/lib/index.ts` is its public API, so anything consumers use must be exported there.
+- `src/demo/` is a demo app that uses the library only through that public API.
 
 ## Development
 
@@ -49,7 +54,3 @@ Create a production build:
 ```bash
 pnpm build
 ```
-
-## Tech stack
-
-React, TypeScript, Vite and ESLint.
