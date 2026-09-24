@@ -26,7 +26,7 @@ export const sampleColumns: WideTableColumn<TradingSession>[] = [
   { key: 'comment', title: 'Comment', width: 300 },
 ] satisfies readonly WideTableColumn<TradingSession>[]
 
-export const sampleRows: TradingSession[] = [
+const handwrittenRows: TradingSession[] = [
   {
     id: '1',
     date: '2023-01-01',
@@ -63,4 +63,28 @@ export const sampleRows: TradingSession[] = [
     comment:
       'This is a sample longer comment for the third trading session. It is intentionally verbose to test how the table handles longer text content in a cell. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
   },
+]
+
+/** Extra rows so the demo overflows `maxVisibleHeight` and scrolls vertically. */
+function generateRows(count: number, startId: number): TradingSession[] {
+  return Array.from({ length: count }, (_, index) => {
+    const id = startId + index
+
+    return {
+      id: String(id),
+      date: `2023-01-${String(id).padStart(2, '0')}`,
+      instrument: 'AAPL',
+      open: 130 + index * 10,
+      close: 140 + index * 10,
+      high: 145 + index * 10,
+      low: 125 + index * 10,
+      volume: 1000 + index * 500,
+      delta: 10,
+    }
+  })
+}
+
+export const sampleRows: TradingSession[] = [
+  ...handwrittenRows,
+  ...generateRows(15, handwrittenRows.length + 1),
 ]

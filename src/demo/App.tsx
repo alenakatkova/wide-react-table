@@ -17,6 +17,7 @@ function App() {
           rows={sampleRows}
           getRowKey={(row) => row.id}
           defaultColumnWidth={125}
+          maxVisibleHeight={400}
         />
       </section>
     </main>
