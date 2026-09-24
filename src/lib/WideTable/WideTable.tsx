@@ -30,17 +30,22 @@ export function WideTable<T>({
   rows,
   getRowKey,
   defaultColumnWidth = FALLBACK_DEFAULT_COLUMN_WIDTH,
+  maxVisibleHeight,
 }: WideTableProps<T>) {
-  const tableWidth = columns.reduce((totalWidth, column) => {
-    return totalWidth + (column.width ?? defaultColumnWidth)
-  }, 0)
+  const columnWidths = columns.map((column) => column.width ?? defaultColumnWidth)
+  const tableWidth = columnWidths.reduce((totalWidth, width) => totalWidth + width, 0)
+  const isHeightBounded = maxVisibleHeight !== undefined
+
+  const containerClassName = isHeightBounded
+    ? 'wide-table-container wide-table-container--bounded'
+    : 'wide-table-container'
 
   return (
-    <div className="wide-table-container">
+    <div className={containerClassName} style={{ maxHeight: maxVisibleHeight }}>
       <table className="wide-table" style={{ width: tableWidth }}>
         <colgroup>
-          {columns.map((column) => (
-            <col key={column.key} width={column.width ?? defaultColumnWidth} />
+          {columns.map((column, index) => (
+            <col key={column.key} style={{ width: columnWidths[index] }} />
           ))}
         </colgroup>
 
