@@ -34,7 +34,7 @@ PR-07 Push. With the `merge` argument, the only commit to push is the merge from
 
 PR-08 The pull request goes from the current branch into `main`. A branch has one pull request. A new pull request is always a draft. Its title is one Conventional Commit line for the whole branch, and its description follows the template below and matches the current branch. If the pull request exists, update its title and description.
 
-PR-09 The pull request must be open and not a draft. Merge with a merge commit, delete the branch, and switch to an updated `main`. Do not change the description.
+PR-09 The pull request must be open. If it is a draft, mark it ready for review. Merge with a merge commit, delete the branch, and switch to an updated `main`. Do not change the description.
 
 PR-10 The final reply gives the pull request URL, its title, its state and the check results.
 
