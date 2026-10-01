@@ -10,21 +10,25 @@ export interface TradingSession {
   low: number
   volume: number
   delta: number
+  comment?: string
 }
 
 export const sampleColumns: WideTableColumn<TradingSession>[] = [
-  { key: 'id', title: 'ID', minWidth: 250 },
-  { key: 'date', title: 'Date', minWidth: 250 },
-  { key: 'instrument', title: 'Instrument', minWidth: 250 },
-  { key: 'open', title: 'Open', minWidth: 250 },
-  { key: 'close', title: 'Close', minWidth: 250 },
-  { key: 'high', title: 'High', minWidth: 250 },
-  { key: 'low', title: 'Low', minWidth: 250 },
-  { key: 'volume', title: 'Volume', minWidth: 250 },
-  { key: 'delta', title: 'Delta', minWidth: 250 },
+  { key: 'id', title: 'ID', width: 75 },
+  { key: 'date', title: 'Date', width: 150 },
+  { key: 'instrument', title: 'Instrument', width: 150 },
+  { key: 'open', title: 'Open' },
+  { key: 'close', title: 'Close' },
+  { key: 'high', title: 'High' },
+  { key: 'low', title: 'Low' },
+  { key: 'volume', title: 'Volume' },
+  { key: 'delta', title: 'Delta' },
+  { key: 'comment', title: 'Comment', width: 300 },
 ] satisfies readonly WideTableColumn<TradingSession>[]
 
-export const sampleRows: TradingSession[] = [
+export const fewSampleColumns = sampleColumns.slice(0, 4)
+
+export const fewSampleRows: TradingSession[] = [
   {
     id: '1',
     date: '2023-01-01',
@@ -35,6 +39,7 @@ export const sampleRows: TradingSession[] = [
     low: 95,
     volume: 1000,
     delta: 10,
+    comment: 'This is a sample comment for the first trading session.',
   },
   {
     id: '2',
@@ -57,5 +62,35 @@ export const sampleRows: TradingSession[] = [
     low: 115,
     volume: 2000,
     delta: 10,
+    comment:
+      'This is a sample longer comment for the third trading session. It is intentionally verbose to test how the table handles longer text content in a cell. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
   },
+]
+
+/**
+ * Extra rows so the demo overflows `maxVisibleHeight` and scrolls vertically. The comment is
+ * longer than its column, so the text fills the last cell up to its right edge.
+ */
+function generateRows(count: number, startId: number): TradingSession[] {
+  return Array.from({ length: count }, (_, index) => {
+    const id = startId + index
+
+    return {
+      id: String(id),
+      date: `2023-01-${String(id).padStart(2, '0')}`,
+      instrument: 'AAPL',
+      open: 130 + index * 10,
+      close: 140 + index * 10,
+      high: 145 + index * 10,
+      low: 125 + index * 10,
+      volume: 1000 + index * 500,
+      delta: 10,
+      comment: `Generated trading session ${id}. This comment is long enough to fill the whole cell.`,
+    }
+  })
+}
+
+export const sampleRows: TradingSession[] = [
+  ...fewSampleRows,
+  ...generateRows(15, fewSampleRows.length + 1),
 ]
