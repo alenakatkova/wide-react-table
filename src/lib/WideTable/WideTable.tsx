@@ -26,7 +26,22 @@ function renderCellValue(value: unknown): ReactNode {
   return String(value)
 }
 
-export function WideTable<T>({
+export function WideTable<T>(props: WideTableProps<T>) {
+  // A table with no columns has no width, so only the container border would show
+  if (props.columns.length === 0) {
+    return (
+      <div className="wide-table-container">
+        <p className="wide-table-message">No columns</p>
+      </div>
+    )
+  }
+
+  // A separate component, so that the scroll bar measuring starts again when the table
+  // replaces the message
+  return <ScrollableTable {...props} />
+}
+
+function ScrollableTable<T>({
   columns,
   rows,
   getRowKey,

@@ -86,6 +86,13 @@ describe('WideTable', () => {
     expect(screen.getByRole('cell', { name: '25' })).toBeInTheDocument()
   })
 
+  it('shows a message instead of the table when there are no columns', () => {
+    render(<WideTable<TestRow> columns={[]} rows={rows} getRowKey={(row) => row.id} />)
+
+    expect(screen.getByText('No columns')).toBeInTheDocument()
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+  })
+
   describe('column widths', () => {
     it('sizes every column with the fallback width when nothing is configured', () => {
       render(<WideTable<TestRow> columns={columns} rows={rows} getRowKey={(row) => row.id} />)
