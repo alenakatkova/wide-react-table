@@ -9,17 +9,17 @@
   background-color: #fafafa;
 }
 
-.wide-table-container--bounded {
+.wide-table-container--max-height {
   /* Reserve room for the vertical scrollbar so it does not take width from the last column */
   scrollbar-gutter: stable;
 }
 
 /* Overlay scroll bars in Chrome and Safari on macOS are up to 15px wide */
-.wide-table-container--space-right {
+.wide-table-container--overlay-scrollbar-right {
   padding-right: 16px;
 }
 
-.wide-table-container--space-bottom {
+.wide-table-container--overlay-scrollbar-bottom {
   padding-bottom: 16px;
 }
 
@@ -69,7 +69,7 @@
   box-shadow: 0 1px #dcdcdc;
 }
 
-.wide-table-message {
+.wide-table-empty-message {
   margin: 0;
   padding: 0.75rem;
   color: #666;

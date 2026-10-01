@@ -3,7 +3,7 @@ import type { WideTableProps } from './types'
 import { useOverlayScrollbarSpace } from './useOverlayScrollbarSpace'
 import { useRef, type ReactNode } from 'react'
 
-const FALLBACK_DEFAULT_COLUMN_WIDTH = 100
+const DEFAULT_COLUMN_WIDTH = 100
 
 function renderCellValue(value: unknown): ReactNode {
   if (value === null || value === undefined) {
@@ -31,7 +31,7 @@ export function WideTable<T>(props: WideTableProps<T>) {
   if (props.columns.length === 0) {
     return (
       <div className="wide-table-container">
-        <p className="wide-table-message">No columns</p>
+        <p className="wide-table-empty-message">No columns</p>
       </div>
     )
   }
@@ -45,21 +45,21 @@ function ScrollableTable<T>({
   columns,
   rows,
   getRowKey,
-  defaultColumnWidth = FALLBACK_DEFAULT_COLUMN_WIDTH,
+  defaultColumnWidth = DEFAULT_COLUMN_WIDTH,
   maxVisibleHeight,
 }: WideTableProps<T>) {
   const columnWidths = columns.map((column) => column.width ?? defaultColumnWidth)
   const tableWidth = columnWidths.reduce((totalWidth, width) => totalWidth + width, 0)
-  const isHeightBounded = maxVisibleHeight !== undefined
+  const hasMaxHeight = maxVisibleHeight !== undefined
 
   const containerRef = useRef<HTMLDivElement>(null)
   const overlayScrollbarSpace = useOverlayScrollbarSpace(containerRef)
 
   const containerClassName = [
     'wide-table-container',
-    isHeightBounded && 'wide-table-container--bounded',
-    overlayScrollbarSpace.right && 'wide-table-container--space-right',
-    overlayScrollbarSpace.bottom && 'wide-table-container--space-bottom',
+    hasMaxHeight && 'wide-table-container--max-height',
+    overlayScrollbarSpace.right && 'wide-table-container--overlay-scrollbar-right',
+    overlayScrollbarSpace.bottom && 'wide-table-container--overlay-scrollbar-bottom',
   ]
     .filter(Boolean)
     .join(' ')

@@ -11,25 +11,26 @@ function toPixels(value: string): number {
   return parseFloat(value) || 0
 }
 
-function measure(container: HTMLElement): OverlayScrollbarSpace {
-  const style = getComputedStyle(container)
+function findOverlayScrollbarSides(container: HTMLElement): OverlayScrollbarSpace {
+  const { borderLeftWidth, borderRightWidth, borderTopWidth, borderBottomWidth } =
+    getComputedStyle(container)
 
   // A classic scroll bar sits between the border and the padding, so it is the only other part
   // of offsetWidth. An overlay scroll bar takes no space, so this is 0. Allow 1px for rounding.
-  const scrollbarWidth =
+  const verticalScrollbarWidth =
     container.offsetWidth -
     container.clientWidth -
-    toPixels(style.borderLeftWidth) -
-    toPixels(style.borderRightWidth)
-  const scrollbarHeight =
+    toPixels(borderLeftWidth) -
+    toPixels(borderRightWidth)
+  const horizontalScrollbarHeight =
     container.offsetHeight -
     container.clientHeight -
-    toPixels(style.borderTopWidth) -
-    toPixels(style.borderBottomWidth)
+    toPixels(borderTopWidth) -
+    toPixels(borderBottomWidth)
 
   return {
-    right: container.scrollHeight > container.clientHeight && scrollbarWidth <= 1,
-    bottom: container.scrollWidth > container.clientWidth && scrollbarHeight <= 1,
+    right: container.scrollHeight > container.clientHeight && verticalScrollbarWidth <= 1,
+    bottom: container.scrollWidth > container.clientWidth && horizontalScrollbarHeight <= 1,
   }
 }
 
@@ -52,7 +53,7 @@ export function useOverlayScrollbarSpace(
     // The table is the only child, so a change of its size or of the container size can change
     // whether the container scrolls
     const observer = new ResizeObserver(() => {
-      const next = measure(container)
+      const next = findOverlayScrollbarSides(container)
       setSpace((current) =>
         current.right === next.right && current.bottom === next.bottom ? current : next,
       )

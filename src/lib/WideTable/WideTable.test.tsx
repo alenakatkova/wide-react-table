@@ -142,10 +142,10 @@ describe('WideTable', () => {
 
       const container = getContainer()
       expect(container.style.maxHeight).toBe('')
-      expect(container).not.toHaveClass('wide-table-container--bounded')
+      expect(container).not.toHaveClass('wide-table-container--max-height')
     })
 
-    it('treats a number as pixels and marks the container as height-bounded', () => {
+    it('treats a number as pixels and marks the container as having a max height', () => {
       render(
         <WideTable<TestRow>
           columns={columns}
@@ -157,7 +157,7 @@ describe('WideTable', () => {
 
       const container = getContainer()
       expect(container).toHaveStyle({ maxHeight: '400px' })
-      expect(container).toHaveClass('wide-table-container--bounded')
+      expect(container).toHaveClass('wide-table-container--max-height')
     })
 
     it('passes a string height through unchanged', () => {
@@ -180,32 +180,32 @@ describe('WideTable', () => {
       mockContainerLayout({ scrollbarSize: 0, overflowsX: false, overflowsY: true })
       renderTable()
 
-      expect(getContainer()).toHaveClass('wide-table-container--space-right')
-      expect(getContainer()).not.toHaveClass('wide-table-container--space-bottom')
+      expect(getContainer()).toHaveClass('wide-table-container--overlay-scrollbar-right')
+      expect(getContainer()).not.toHaveClass('wide-table-container--overlay-scrollbar-bottom')
     })
 
     it('adds space at the bottom when an overlay scroll bar scrolls columns', () => {
       mockContainerLayout({ scrollbarSize: 0, overflowsX: true, overflowsY: false })
       renderTable()
 
-      expect(getContainer()).toHaveClass('wide-table-container--space-bottom')
-      expect(getContainer()).not.toHaveClass('wide-table-container--space-right')
+      expect(getContainer()).toHaveClass('wide-table-container--overlay-scrollbar-bottom')
+      expect(getContainer()).not.toHaveClass('wide-table-container--overlay-scrollbar-right')
     })
 
     it('adds no space when classic scroll bars already take space', () => {
       mockContainerLayout({ scrollbarSize: 15, overflowsX: true, overflowsY: true })
       renderTable()
 
-      expect(getContainer()).not.toHaveClass('wide-table-container--space-right')
-      expect(getContainer()).not.toHaveClass('wide-table-container--space-bottom')
+      expect(getContainer()).not.toHaveClass('wide-table-container--overlay-scrollbar-right')
+      expect(getContainer()).not.toHaveClass('wide-table-container--overlay-scrollbar-bottom')
     })
 
     it('adds no space when the table does not scroll', () => {
       mockContainerLayout({ scrollbarSize: 0, overflowsX: false, overflowsY: false })
       renderTable()
 
-      expect(getContainer()).not.toHaveClass('wide-table-container--space-right')
-      expect(getContainer()).not.toHaveClass('wide-table-container--space-bottom')
+      expect(getContainer()).not.toHaveClass('wide-table-container--overlay-scrollbar-right')
+      expect(getContainer()).not.toHaveClass('wide-table-container--overlay-scrollbar-bottom')
     })
   })
 })
