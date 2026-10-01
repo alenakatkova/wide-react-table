@@ -58,8 +58,15 @@
 }
 
 .wide-table th {
+  position: sticky;
+  top: 0;
   background-color: #f5f5f5;
   font-weight: 600;
+
+  /* The line under the header. The first row's top border scrolls away with the row, so the
+     sticky header needs its own line. It covers that border at the top, and the container clips
+     it when the table has no rows, so it is never doubled. */
+  box-shadow: 0 1px #dcdcdc;
 }
 
 .wide-table-message {
