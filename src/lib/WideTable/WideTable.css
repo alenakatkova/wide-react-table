@@ -11,6 +11,15 @@
   scrollbar-gutter: stable;
 }
 
+/* Overlay scroll bars in Chrome and Safari on macOS are up to 15px wide */
+.wide-table-container--space-right {
+  padding-right: 16px;
+}
+
+.wide-table-container--space-bottom {
+  padding-bottom: 16px;
+}
+
 .wide-table {
   border-spacing: 0;
   text-align: left;

@@ -1,6 +1,7 @@
 import './WideTable.css'
 import type { WideTableProps } from './types'
-import type { ReactNode } from 'react'
+import { useOverlayScrollbarSpace } from './useOverlayScrollbarSpace'
+import { useRef, type ReactNode } from 'react'
 
 const FALLBACK_DEFAULT_COLUMN_WIDTH = 100
 
@@ -36,12 +37,20 @@ export function WideTable<T>({
   const tableWidth = columnWidths.reduce((totalWidth, width) => totalWidth + width, 0)
   const isHeightBounded = maxVisibleHeight !== undefined
 
-  const containerClassName = isHeightBounded
-    ? 'wide-table-container wide-table-container--bounded'
-    : 'wide-table-container'
+  const containerRef = useRef<HTMLDivElement>(null)
+  const overlayScrollbarSpace = useOverlayScrollbarSpace(containerRef)
+
+  const containerClassName = [
+    'wide-table-container',
+    isHeightBounded && 'wide-table-container--bounded',
+    overlayScrollbarSpace.right && 'wide-table-container--space-right',
+    overlayScrollbarSpace.bottom && 'wide-table-container--space-bottom',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
-    <div className={containerClassName} style={{ maxHeight: maxVisibleHeight }}>
+    <div ref={containerRef} className={containerClassName} style={{ maxHeight: maxVisibleHeight }}>
       <table className="wide-table" style={{ width: tableWidth }}>
         <colgroup>
           {columns.map((column, index) => (
