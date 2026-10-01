@@ -67,7 +67,10 @@ export const fewSampleRows: TradingSession[] = [
   },
 ]
 
-/** Extra rows so the demo overflows `maxVisibleHeight` and scrolls vertically. */
+/**
+ * Extra rows so the demo overflows `maxVisibleHeight` and scrolls vertically. The comment is
+ * longer than its column, so the text fills the last cell up to its right edge.
+ */
 function generateRows(count: number, startId: number): TradingSession[] {
   return Array.from({ length: count }, (_, index) => {
     const id = startId + index
@@ -82,6 +85,7 @@ function generateRows(count: number, startId: number): TradingSession[] {
       low: 125 + index * 10,
       volume: 1000 + index * 500,
       delta: 10,
+      comment: `Generated trading session ${id}. This comment is long enough to fill the whole cell.`,
     }
   })
 }

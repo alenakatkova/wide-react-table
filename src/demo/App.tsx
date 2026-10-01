@@ -45,6 +45,13 @@ const demos: Demo[] = [
     columns: sampleColumns,
     rows: fewSampleRows,
   },
+  {
+    id: 'rows-and-columns-overflow',
+    title: 'Rows and columns do not fit',
+    columns: sampleColumns,
+    rows: sampleRows,
+    maxVisibleHeight: 400,
+  },
 ]
 
 function App() {
