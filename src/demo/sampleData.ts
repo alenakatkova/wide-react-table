@@ -26,7 +26,9 @@ export const sampleColumns: WideTableColumn<TradingSession>[] = [
   { key: 'comment', title: 'Comment', width: 300 },
 ] satisfies readonly WideTableColumn<TradingSession>[]
 
-const handwrittenRows: TradingSession[] = [
+export const fewSampleColumns = sampleColumns.slice(0, 4)
+
+export const fewSampleRows: TradingSession[] = [
   {
     id: '1',
     date: '2023-01-01',
@@ -85,6 +87,6 @@ function generateRows(count: number, startId: number): TradingSession[] {
 }
 
 export const sampleRows: TradingSession[] = [
-  ...handwrittenRows,
-  ...generateRows(15, handwrittenRows.length + 1),
+  ...fewSampleRows,
+  ...generateRows(15, fewSampleRows.length + 1),
 ]
