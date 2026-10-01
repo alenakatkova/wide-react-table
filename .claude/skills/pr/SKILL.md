@@ -20,13 +20,13 @@ PR-02 The task of a branch is what its name says. All work must be committed, an
 
 PR-03 The branch must follow every instruction in its `CLAUDE.md`. Read the file again before this check. Do not use an earlier version from memory.
 
-PR-04 `pnpm build`, `pnpm lint`, `pnpm format:check` and `pnpm test:run` must pass on the final commit.
+PR-04 `pnpm build`, `pnpm lint`, `pnpm format:check` and `pnpm test:run` must pass on the final commit. If the diff changes only Markdown files, run only `pnpm format:check`.
 
 PR-05 The pull request goes from the current branch into `main`, so the current branch must not be `main`. A branch has one pull request. A new pull request is always a draft.
 
 PR-06 The title is one Conventional Commit line for the whole branch. The description follows the template below and matches the current branch. If the pull request exists, update both.
 
-PR-07 Merge only a pull request that is open and not a draft, when the PR-04 checks pass and the local branch matches the remote branch. Use a merge commit, delete the branch, and switch to an updated `main`. Do not push or change the description.
+PR-07 Merge only a pull request that is open and not a draft, when the PR-04 checks pass and the local branch matches the remote branch. Use a merge commit, delete the branch, and switch to an updated `main`. Do not change the description. If the branch does not contain the latest remote `main`, first merge `main` into it, run the PR-04 checks and push. For a merge conflict, follow PR-13.
 
 PR-08 If a rule is broken, a check fails, or a push needs force, stop and do not push or merge. Ask about each problem with the AskUserQuestion tool. Name the problem and the rule, and offer concrete solutions with the recommended one first. Do not fix anything before the user chooses. After the chosen fixes, start again from PR-01.
 
@@ -46,6 +46,8 @@ Otherwise add one small visual only if bullets cannot show the change: a diff sk
 PR-11 Evidence: the PR-04 checks with their results, and the tests that cover changed behavior. Say what was not checked.
 
 PR-12 Risk: whether reverting the pull request fully restores the old state, and what can break, such as the public API, the layout, or only the demo.
+
+PR-13 If merging `main` causes a conflict, resolve it, then show each resolved block next to both original versions and ask the user to approve it. Commit only after approval. If the user rejects it, run `git merge --abort` and stop.
 
 ## Body template
 
