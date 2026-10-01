@@ -4,6 +4,9 @@
   max-width: 100%;
   overflow: auto;
   border: 1px solid #dcdcdc;
+
+  /* Shows through only in the space kept free for scroll bars */
+  background-color: #fafafa;
 }
 
 .wide-table-container--bounded {
@@ -23,6 +26,11 @@
 .wide-table {
   border-spacing: 0;
   text-align: left;
+  background-color: #fff;
+
+  /* A line between the table and the scroll bar space. The container clips it where the table
+     touches the container border, so the border is not doubled there. */
+  box-shadow: 0 0 0 1px #dcdcdc;
 
   /* Column widths come from <colgroup>, not from cell content */
   table-layout: fixed;
@@ -31,7 +39,7 @@
 .wide-table th,
 .wide-table td {
   overflow: hidden;
-  padding: 0.75rem;
+  padding: 0.1rem;
   border-right: 1px solid #dcdcdc;
   text-overflow: ellipsis;
   white-space: nowrap;
