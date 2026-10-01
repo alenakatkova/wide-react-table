@@ -1,17 +1,13 @@
 .wide-table-container {
   box-sizing: border-box;
-
-  /* Shrink to the table when it is narrower than the parent, never grow past the parent */
   width: fit-content;
   max-width: 100%;
-
-  /* Wide tables scroll horizontally; height-bounded tables also scroll vertically */
   overflow: auto;
   border: 1px solid #dcdcdc;
 }
 
 .wide-table-container--bounded {
-  /* Reserve room for the vertical scrollbar so it never steals width from the last column */
+  /* Reserve room for the vertical scrollbar so it does not take width from the last column */
   scrollbar-gutter: stable;
 }
 
