@@ -24,19 +24,20 @@
   overflow: hidden;
   padding: 0.75rem;
   border-right: 1px solid #dcdcdc;
-  border-bottom: 1px solid #dcdcdc;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Row lines sit above each row, so a table without rows has no line under the header
+   that would double the container border */
+.wide-table td {
+  border-top: 1px solid #dcdcdc;
 }
 
 /* The container draws the outer border, so drop the cell borders that would double it */
 .wide-table th:last-child,
 .wide-table td:last-child {
   border-right: none;
-}
-
-.wide-table tbody tr:last-child td {
-  border-bottom: none;
 }
 
 .wide-table th {
