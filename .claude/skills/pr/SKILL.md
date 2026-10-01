@@ -43,7 +43,7 @@ PR-10 Summary: 2–4 short bullets about what changed and why, plus one line for
 
 Otherwise add one small visual only if bullets cannot show the change: a diff sketch, a call tree, or pseudocode.
 
-PR-11 Evidence: the PR-04 checks with their results, and the tests that cover changed behavior. Say what was not checked.
+PR-11 Evidence: each PR-04 check that ran, with its result, and the tests that cover changed behavior. Add a "Not checked" line only for changed application behavior that no check covers. Do not explain skipped checks or describe how the pull request was made.
 
 PR-12 Risk: whether reverting the pull request fully restores the old state, and what can break, such as the public API, the layout, or only the demo.
 
