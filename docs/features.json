@@ -1,0 +1,549 @@
+{
+  "updated": "2026-10-09",
+  "goals": {
+    "use": "A public npm library. The author's own app uses it as a normal dependency.",
+    "scale": "500 columns x 100,000 rows. Initial render under 500ms, scrolling at about 60 frames per second on a normal laptop, search and filter results under 200ms.",
+    "versioning": "0.x versions until all core epics are done. Breaking changes are allowed in 0.x. Then 1.0 with semantic versioning."
+  },
+  "priorities": {
+    "core": "Needed for 1.0.",
+    "later": "Wanted, low priority. Can come after 1.0.",
+    "future": "Optional. Only if a real need appears."
+  },
+  "decisions": [
+    "Data lives in the browser first. The consumer passes all rows. Inside the table, data goes through fixed steps: search, filter, sort, paginate. A server mode can take over the same steps later.",
+    "The library ships its own UI (menus, popups, panels) with CSS the consumer can override. It is not headless.",
+    "Every user-changeable state (hidden columns, filters, sort, search text, page, collapsed groups) works in two modes: uncontrolled with a default value, and controlled with a value prop and a change callback.",
+    "Each column has a type: text, number, date or category. Filters, sorting and CSV export use the type.",
+    "Search and filters use the text the user sees, after custom render or format.",
+    "Pagination is an optional mode. The default is one scrolling list with virtual rendering."
+  ],
+  "passesRule": "An epic has passes: true only when every acceptance item has an automated test that passes. The test name starts with the epic id, for example \"E08: sorts 100,000 rows in under 200ms\". Layout items use browser tests, speed items use the benchmark script. If a test of an epic fails, its passes value goes back to false.",
+  "epics": [
+    {
+      "id": "E00",
+      "title": "Base layout",
+      "priority": "core",
+      "order": 0,
+      "status": "done",
+      "passes": false,
+      "why": "A table with fixed column widths that scrolls in both directions.",
+      "scope": [
+        "Typed column config with fixed widths and a default width",
+        "Scroll container with optional maxVisibleHeight",
+        "Sticky header",
+        "Space for overlay scroll bars (macOS)",
+        "Message when there are no columns"
+      ],
+      "outOfScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "Each column uses its own width or the default width, and the table width is the sum of the column widths",
+        "With maxVisibleHeight, rows scroll inside the container",
+        "The header stays visible while rows scroll",
+        "Overlay scroll bars do not cover the last column or the last row when scrolled to the end",
+        "A table with no columns shows a \"No columns\" message"
+      ],
+      "tasks": [
+        "Add the E00: prefix to the existing tests that cover the acceptance items",
+        "Add browser tests for the sticky header and the overlay scroll bar space (needs E28)"
+      ]
+    },
+    {
+      "id": "E01",
+      "title": "Library build and package",
+      "priority": "core",
+      "order": 1,
+      "status": "planned",
+      "passes": false,
+      "why": "Other apps, including the author's app, must install the library from npm.",
+      "scope": [
+        "Vite library mode build: ESM output, TypeScript types and one CSS file",
+        "package.json fields: exports, types, peerDependencies on react and react-dom, files",
+        "Keep the demo app as a separate build that uses only the public API",
+        "Release steps for 0.x versions, with a changelog"
+      ],
+      "outOfScope": ["CommonJS output", "CI pipeline"],
+      "dependsOn": [],
+      "acceptance": [
+        "A new Vite + React app can install a packed version (pnpm pack) and render WideTable with types and styles",
+        "react and react-dom are not part of the bundle"
+      ],
+      "tasks": [
+        "Add a Vite library build config for src/lib",
+        "Set package.json exports, types, files and peerDependencies",
+        "Check the packed package in a separate test app",
+        "Add CHANGELOG.md and describe the release steps in README"
+      ]
+    },
+    {
+      "id": "E02",
+      "title": "Rendering spike: <table> or <div> grid",
+      "priority": "core",
+      "order": 1,
+      "status": "planned",
+      "passes": false,
+      "why": "Virtual rendering of rows and columns, pinned columns and column groups all depend on the DOM structure. Decide it with data before building features.",
+      "scope": [
+        "Two small prototypes with 500 columns x 100,000 rows: a native <table> with spacer rows and columns, and a <div> grid with ARIA roles",
+        "Measure initial render time, scrolling frame rate, memory, and search and filter time over the shown text",
+        "Check that pinned columns and a two-level column header work in each prototype",
+        "Write the result and the decision in docs/"
+      ],
+      "outOfScope": ["Production-quality code", "Final UI"],
+      "dependsOn": [],
+      "acceptance": [
+        "A written decision with the measured numbers for both prototypes",
+        "A known plan for search speed and memory at full scale (for example a search index, debounce or a Web Worker)"
+      ],
+      "tasks": [
+        "Write a data generator for 500 columns x 100,000 rows",
+        "Build the <table> prototype with row and column virtualization",
+        "Build the <div> grid prototype with row and column virtualization",
+        "Add one pinned column and a two-level header to both",
+        "Measure render, scroll, memory, search and filter in Chrome and Safari",
+        "Write the decision document"
+      ]
+    },
+    {
+      "id": "E28",
+      "title": "Test setup for browser and speed tests",
+      "priority": "core",
+      "order": 1,
+      "status": "planned",
+      "passes": false,
+      "why": "jsdom does no layout, so layout and speed acceptance items need a real browser. Without these tests, no such item can pass.",
+      "scope": [
+        "Playwright browser tests that run against the demo app, in Chrome and Safari (WebKit)",
+        "A benchmark script that measures render, scroll, search and filter times for the scale goal",
+        "pnpm scripts for both, so the pr skill can run them"
+      ],
+      "outOfScope": ["CI pipeline", "Visual screenshot comparison"],
+      "dependsOn": [],
+      "acceptance": [
+        "One pnpm script runs the browser tests and fails when a test fails",
+        "One pnpm script runs the benchmark and fails when a speed goal is missed"
+      ],
+      "tasks": [
+        "Add Playwright and a pnpm script for browser tests",
+        "Write a first browser test for the sticky header",
+        "Add a benchmark script with the scale goals as limits"
+      ]
+    },
+    {
+      "id": "E03",
+      "title": "Virtual rendering and basic accessibility",
+      "priority": "core",
+      "order": 2,
+      "status": "planned",
+      "passes": false,
+      "why": "Only the rows and columns on screen are rendered, so the table stays fast at full scale.",
+      "scope": [
+        "Row and column virtualization, based on the E02 decision",
+        "Keep the sticky header, overlay scroll bar space and fixed widths",
+        "ARIA grid roles with total row and column counts and each cell's index, so screen readers know the full size"
+      ],
+      "outOfScope": ["Keyboard navigation (E22)", "Variable row heights"],
+      "dependsOn": ["E02"],
+      "acceptance": [
+        "The demo shows 500 columns x 100,000 rows and meets the scale goals",
+        "A screen reader announces the correct row and column numbers"
+      ],
+      "tasks": []
+    },
+    {
+      "id": "E04",
+      "title": "Data pipeline and state model",
+      "priority": "core",
+      "order": 3,
+      "status": "planned",
+      "passes": false,
+      "why": "Search, filters, sort and pagination must work together in a fixed order, and consumers must be able to control their state.",
+      "scope": [
+        "Pipeline steps: search, filter, sort, paginate",
+        "One pattern for controlled and uncontrolled state, used by every feature",
+        "Design the steps so a server mode can replace them later"
+      ],
+      "outOfScope": ["Server mode itself (E26)"],
+      "dependsOn": [],
+      "acceptance": [
+        "Unit tests show the steps run in the correct order",
+        "A feature can be used controlled and uncontrolled with the same API pattern"
+      ],
+      "tasks": []
+    },
+    {
+      "id": "E05",
+      "title": "Column types and custom cell render",
+      "priority": "core",
+      "order": 3,
+      "status": "planned",
+      "passes": false,
+      "why": "Dates, numbers and badges need formatting, and filters, sort and export need to know each column's type.",
+      "scope": [
+        "Column type: text, number, date or category",
+        "Default formatting by type",
+        "Custom render function or formatter per column",
+        "One function that gives the shown text of a cell, used by search, filter and CSV export"
+      ],
+      "outOfScope": [],
+      "dependsOn": [],
+      "acceptance": ["A column with a custom render shows it, and search finds its shown text"],
+      "tasks": []
+    },
+    {
+      "id": "E06",
+      "title": "Theming with CSS variables",
+      "priority": "core",
+      "order": 3,
+      "status": "planned",
+      "passes": false,
+      "why": "Apps must be able to match the table to their own design.",
+      "scope": [
+        "Move all colors, borders, spacing and fonts into --wide-table-* variables with defaults"
+      ],
+      "outOfScope": ["Built-in dark theme"],
+      "dependsOn": [],
+      "acceptance": [
+        "An app changes the look by setting variables only, without overriding classes"
+      ],
+      "tasks": []
+    },
+    {
+      "id": "E07",
+      "title": "UI text overrides",
+      "priority": "core",
+      "order": 3,
+      "status": "planned",
+      "passes": false,
+      "why": "The built-in UI has its own text, such as \"No columns\" and filter labels. A public library must let apps change it, for example for other languages.",
+      "scope": ["A prop with all UI texts, with English defaults"],
+      "outOfScope": ["Bundled translations"],
+      "dependsOn": [],
+      "acceptance": ["Every text in the built-in UI can be changed through the prop"],
+      "tasks": []
+    },
+    {
+      "id": "E08",
+      "title": "Sorting",
+      "priority": "core",
+      "order": 4,
+      "status": "planned",
+      "passes": false,
+      "why": "Users need to order rows by a column.",
+      "scope": [
+        "Click a header to sort ascending, descending, or not sorted",
+        "Shift+click to sort by several columns",
+        "Sort by column type, with an optional custom compare function"
+      ],
+      "outOfScope": [],
+      "dependsOn": ["E04", "E05"],
+      "acceptance": ["Sorting 100,000 rows takes under 200ms"],
+      "tasks": []
+    },
+    {
+      "id": "E09",
+      "title": "Pinned columns",
+      "priority": "core",
+      "order": 4,
+      "status": "planned",
+      "passes": false,
+      "why": "In a wide table, key columns such as ID or name must stay visible while the user scrolls right.",
+      "scope": ["Pin columns to the left or right in config"],
+      "outOfScope": ["Pin and unpin from the UI"],
+      "dependsOn": ["E03"],
+      "acceptance": [
+        "Pinned columns stay in place during horizontal scrolling, also with the sticky header"
+      ],
+      "tasks": []
+    },
+    {
+      "id": "E10",
+      "title": "Column groups",
+      "priority": "core",
+      "order": 4,
+      "status": "planned",
+      "passes": false,
+      "why": "Hundreds of columns are easier to read and use in named groups.",
+      "scope": [
+        "Groups in the column config, with several levels",
+        "Expand and collapse a group from its header",
+        "A column marked as a summary for its group stays visible when the group is collapsed",
+        "A collapsed group with no summary column shows as one narrow column with its name"
+      ],
+      "outOfScope": [],
+      "dependsOn": ["E03"],
+      "acceptance": [
+        "A three-level group header renders correctly with virtual columns",
+        "Collapsing a group shows only its summary columns, or the narrow column if it has none"
+      ],
+      "tasks": []
+    },
+    {
+      "id": "E11",
+      "title": "Hide and show columns",
+      "priority": "core",
+      "order": 5,
+      "status": "planned",
+      "passes": false,
+      "why": "With hundreds of columns, users must choose which ones they see.",
+      "scope": [
+        "Columns tool panel: a side panel with all columns as a tree with their groups, show and hide checkboxes, and a search box",
+        "Hidden columns as state (controlled or uncontrolled)"
+      ],
+      "outOfScope": ["Saving the state in the browser (apps can do it with the controlled mode)"],
+      "dependsOn": ["E04", "E10"],
+      "acceptance": ["A user can find and hide one column out of 500 in a few seconds"],
+      "tasks": []
+    },
+    {
+      "id": "E12",
+      "title": "Free text search",
+      "priority": "core",
+      "order": 5,
+      "status": "planned",
+      "passes": false,
+      "why": "Users need to find rows without knowing which column has the value.",
+      "scope": [
+        "One search box for the whole table",
+        "Search the shown text in visible columns only",
+        "Highlight the matching text"
+      ],
+      "outOfScope": [],
+      "dependsOn": ["E04", "E05"],
+      "acceptance": ["Results show in under 200ms at full scale"],
+      "tasks": []
+    },
+    {
+      "id": "E13",
+      "title": "Column filters",
+      "priority": "core",
+      "order": 5,
+      "status": "planned",
+      "passes": false,
+      "why": "Users need to narrow rows by the values of one column.",
+      "scope": [
+        "Value list filter for text and category columns: checkboxes for each unique value, with a search box",
+        "Condition filter for number and date columns: equals, greater than, less than, between",
+        "Filter state (controlled or uncontrolled) and a mark on filtered column headers"
+      ],
+      "outOfScope": ["Custom filter components"],
+      "dependsOn": ["E04", "E05"],
+      "acceptance": ["Filters on several columns work together with search and sorting"],
+      "tasks": []
+    },
+    {
+      "id": "E16",
+      "title": "Row actions",
+      "priority": "core",
+      "order": 6,
+      "status": "planned",
+      "passes": false,
+      "why": "Apps need buttons per row, such as Edit, which opens the app's own modal.",
+      "scope": [
+        "An actions column, pinned right, with buttons from config",
+        "onRowAction(action, row) callback"
+      ],
+      "outOfScope": ["Built-in edit modal (E27)", "Inline cell editing"],
+      "dependsOn": ["E09"],
+      "acceptance": ["The demo opens its own modal from an Edit button"],
+      "tasks": []
+    },
+    {
+      "id": "E18",
+      "title": "Documentation",
+      "priority": "core",
+      "order": 6,
+      "status": "planned",
+      "passes": false,
+      "why": "A public library needs docs to be used by others.",
+      "scope": ["API reference for every prop and column option", "Examples for each feature"],
+      "outOfScope": [],
+      "dependsOn": ["E01"],
+      "acceptance": ["Every public prop and column option is documented with an example"],
+      "tasks": []
+    },
+    {
+      "id": "E14",
+      "title": "Pagination",
+      "priority": "later",
+      "order": 7,
+      "status": "planned",
+      "passes": false,
+      "why": "Some apps want pages instead of one long scrolling list.",
+      "scope": [
+        "An optional mode with page size and page controls",
+        "The page is state (controlled or uncontrolled)"
+      ],
+      "outOfScope": ["Pagination together with row grouping"],
+      "dependsOn": ["E04"],
+      "acceptance": ["Changing search or filters goes back to page 1"],
+      "tasks": []
+    },
+    {
+      "id": "E15",
+      "title": "Status bar",
+      "priority": "later",
+      "order": 7,
+      "status": "planned",
+      "passes": false,
+      "why": "Users need to see how many rows match.",
+      "scope": ["A footer with total rows and rows after search and filters"],
+      "outOfScope": ["Selected rows and sums of selected cells (needs E21)"],
+      "dependsOn": ["E04"],
+      "acceptance": ["The counts update after search and filter changes"],
+      "tasks": []
+    },
+    {
+      "id": "E17",
+      "title": "CSV export",
+      "priority": "later",
+      "order": 7,
+      "status": "planned",
+      "passes": false,
+      "why": "Users need to take the data they see to Excel or other tools.",
+      "scope": [
+        "Export the current view: after search, filters and sort, visible columns only, shown text"
+      ],
+      "outOfScope": ["Excel (.xlsx) format"],
+      "dependsOn": ["E04", "E05"],
+      "acceptance": ["Exporting 100,000 rows does not freeze the page"],
+      "tasks": []
+    },
+    {
+      "id": "E19",
+      "title": "Resize columns",
+      "priority": "later",
+      "order": 8,
+      "status": "planned",
+      "passes": false,
+      "why": "Users want to change column widths by dragging.",
+      "scope": ["Drag the header edge", "Widths as state"],
+      "outOfScope": [],
+      "dependsOn": ["E03", "E04"],
+      "acceptance": [],
+      "tasks": []
+    },
+    {
+      "id": "E20",
+      "title": "Reorder columns",
+      "priority": "later",
+      "order": 8,
+      "status": "planned",
+      "passes": false,
+      "why": "Users want to change the column order by dragging.",
+      "scope": ["Drag headers to reorder", "A column stays inside its group"],
+      "outOfScope": [],
+      "dependsOn": ["E10"],
+      "acceptance": [],
+      "tasks": []
+    },
+    {
+      "id": "E21",
+      "title": "Row selection",
+      "priority": "later",
+      "order": 8,
+      "status": "planned",
+      "passes": false,
+      "why": "Users want to select rows and act on them.",
+      "scope": [
+        "Checkbox column",
+        "Select all rows after search and filters",
+        "Selected rows as state",
+        "Selected count in the status bar"
+      ],
+      "outOfScope": [],
+      "dependsOn": ["E04", "E15"],
+      "acceptance": [],
+      "tasks": []
+    },
+    {
+      "id": "E22",
+      "title": "Keyboard navigation",
+      "priority": "later",
+      "order": 8,
+      "status": "planned",
+      "passes": false,
+      "why": "Users who do not use a mouse must be able to move between cells.",
+      "scope": [
+        "Arrow keys, Home, End, Page Up and Page Down between cells, with focus kept during virtual scrolling"
+      ],
+      "outOfScope": [],
+      "dependsOn": ["E03"],
+      "acceptance": [],
+      "tasks": []
+    },
+    {
+      "id": "E23",
+      "title": "Row grouping",
+      "priority": "future",
+      "order": 9,
+      "status": "planned",
+      "passes": false,
+      "why": "Group rows by the value of one column.",
+      "scope": ["One level", "Group rows with value and row count", "Expand and collapse groups"],
+      "outOfScope": ["Pagination together with row grouping"],
+      "dependsOn": ["E04"],
+      "acceptance": [],
+      "tasks": []
+    },
+    {
+      "id": "E24",
+      "title": "Multi-level row grouping with totals",
+      "priority": "future",
+      "order": 9,
+      "status": "planned",
+      "passes": false,
+      "why": "Group by several columns and show totals such as sum and average in group rows.",
+      "scope": [],
+      "outOfScope": [],
+      "dependsOn": ["E23"],
+      "acceptance": [],
+      "tasks": []
+    },
+    {
+      "id": "E25",
+      "title": "Master/detail",
+      "priority": "future",
+      "order": 9,
+      "status": "planned",
+      "passes": false,
+      "why": "A row expands to show a detail panel below it.",
+      "scope": [],
+      "outOfScope": [],
+      "dependsOn": ["E03"],
+      "acceptance": [],
+      "tasks": []
+    },
+    {
+      "id": "E26",
+      "title": "Server-side data mode",
+      "priority": "future",
+      "order": 9,
+      "status": "planned",
+      "passes": false,
+      "why": "Support data sets too large for the browser.",
+      "scope": [
+        "The consumer gives a function that returns rows for the current search, filters, sort and page"
+      ],
+      "outOfScope": [],
+      "dependsOn": ["E04"],
+      "acceptance": [],
+      "tasks": []
+    },
+    {
+      "id": "E27",
+      "title": "Built-in row edit modal",
+      "priority": "future",
+      "order": 9,
+      "status": "planned",
+      "passes": false,
+      "why": "Apps that do not want their own form could use a form generated from the column types.",
+      "scope": [],
+      "outOfScope": [],
+      "dependsOn": ["E05", "E16"],
+      "acceptance": [],
+      "tasks": []
+    }
+  ]
+}
