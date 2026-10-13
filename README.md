@@ -4,9 +4,11 @@ A reusable React table component for exploring datasets with hundreds of columns
 
 The project investigates how to keep wide tables responsive and practical while providing a simple API for React applications.
 
+The library ships its own UI, such as menus, popups and panels, with CSS that apps can override. It is not a headless library.
+
 ## Status
 
-Work in progress. Typed column definitions, basic table rendering, fixed column widths and a scrollable container are implemented. The next focus is wide-table behavior and performance with realistic datasets.
+Work in progress. All features, with their priority and status, are listed in [docs/features.json](docs/features.json).
 
 ## Tech stack
 

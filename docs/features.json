@@ -1,0 +1,345 @@
+{
+  "updated": "2026-10-13",
+  "goals": {
+    "use": "A public npm library.",
+    "scale": "500 columns x 100,000 rows. Initial render under 500ms, scrolling at about 60 frames per second on a normal laptop, search and filter results under 200ms.",
+    "versioning": "0.x versions until all core features are done. Breaking changes are allowed in 0.x. Then 1.0 with semantic versioning."
+  },
+  "priorities": {
+    "core": "Needed for 1.0.",
+    "later": "Wanted, low priority. Can come after 1.0.",
+    "future": "Optional. Only if a real need appears."
+  },
+  "statuses": {
+    "idea": "Brainstormed. Has why, priority and dependsOn, and brainstormNotes with what was decided. Has no acceptance items.",
+    "refined": "Acceptance items are agreed with the user and replace the brainstormNotes. Work can start.",
+    "in-progress": "Work on the feature has started on a branch.",
+    "done": "Merged. passes says whether the tests prove it.",
+    "dropped": "Decided not to build. It stays in the list, so it is not suggested again. The reason is in PROGRESS.md."
+  },
+  "rules": {
+    "workOrder": "Do core features first, then later, then future. Inside a priority, a feature comes after the features in its dependsOn. If this does not decide the order, follow the order of this list.",
+    "acceptance": "Acceptance items of a feature are written together with the user when the feature is refined (status refined).",
+    "passes": "A feature has passes: true only when every acceptance item has an automated test that passes. The test name starts with the feature id, for example \"FEAT-007: a column can have the type number\". Layout items use browser tests, speed items use the benchmark script. If a test of a feature fails, its passes value goes back to false."
+  },
+  "features": [
+    {
+      "id": "FEAT-001",
+      "title": "Base layout",
+      "priority": "core",
+      "status": "done",
+      "passes": false,
+      "why": "A table with fixed column widths that scrolls in both directions.",
+      "dependsOn": [],
+      "acceptance": [
+        "Each column uses its own width or the default width, and the table width is the sum of the column widths",
+        "With maxVisibleHeight, rows scroll inside the container",
+        "The header stays visible while rows scroll",
+        "Overlay scroll bars do not cover the last column or the last row when scrolled to the end",
+        "A table with no columns shows a \"No columns\" message"
+      ],
+      "issues": []
+    },
+    {
+      "id": "FEAT-002",
+      "title": "Library build and package",
+      "priority": "core",
+      "status": "idea",
+      "passes": false,
+      "why": "Other apps must be able to install the library from npm.",
+      "dependsOn": [],
+      "issues": []
+    },
+    {
+      "id": "FEAT-003",
+      "title": "Rendering spike: <table> or <div> grid",
+      "priority": "core",
+      "status": "idea",
+      "passes": false,
+      "why": "Virtual rendering of rows and columns, pinned columns and column groups all depend on the DOM structure. Decide it with data before building features.",
+      "brainstormNotes": "Build a native <table> version and a <div> grid version, measure both at 500 columns x 100,000 rows, and choose from the numbers.",
+      "dependsOn": [],
+      "issues": []
+    },
+    {
+      "id": "FEAT-004",
+      "title": "Test setup for browser and speed tests",
+      "priority": "core",
+      "status": "idea",
+      "passes": false,
+      "why": "jsdom does no layout, so layout and speed acceptance items need a real browser. Without these tests, no such item can pass.",
+      "brainstormNotes": "Layout items are tested with browser tests (Playwright), and speed items with a benchmark script. Browser tests also check the UI with axe. With this feature, CLAUDE.md gets the rule: all UI that the library renders must meet WCAG 2.2 level AA, and browser tests check each feature's UI with axe.",
+      "dependsOn": [],
+      "issues": []
+    },
+    {
+      "id": "FEAT-005",
+      "title": "Virtual rendering",
+      "priority": "core",
+      "status": "idea",
+      "passes": false,
+      "why": "Only the rows and columns on screen are rendered, so the table stays fast at full scale.",
+      "brainstormNotes": "The table shows 500 columns x 100,000 rows and meets the scale goals.",
+      "dependsOn": ["FEAT-003"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-006",
+      "title": "Data pipeline and state model",
+      "priority": "core",
+      "status": "idea",
+      "passes": false,
+      "why": "Search, filters, sort and pagination must work together in a fixed order.",
+      "brainstormNotes": "The app passes all rows. Rows go through fixed steps in the browser: search, filter, sort, paginate. A server mode can take over these steps later.",
+      "dependsOn": [],
+      "issues": []
+    },
+    {
+      "id": "FEAT-007",
+      "title": "Column types and custom cell render",
+      "priority": "core",
+      "status": "idea",
+      "passes": false,
+      "why": "Dates, numbers and badges need formatting, and filters, sort and export need to know each column's type.",
+      "brainstormNotes": "A column can have the type text, number, date or category, and a custom render function or formatter.",
+      "dependsOn": [],
+      "issues": []
+    },
+    {
+      "id": "FEAT-008",
+      "title": "Theming with CSS variables",
+      "priority": "later",
+      "status": "idea",
+      "passes": false,
+      "why": "Apps must be able to match the table to their own design.",
+      "brainstormNotes": "All colors, borders, spacing and fonts come from --wide-table-* variables with defaults. The library has no built-in dark theme.",
+      "dependsOn": [],
+      "issues": []
+    },
+    {
+      "id": "FEAT-009",
+      "title": "UI text overrides",
+      "priority": "core",
+      "status": "idea",
+      "passes": false,
+      "why": "The built-in UI has its own text, such as \"No columns\" and filter labels. A public library must let apps change it, for example for other languages.",
+      "dependsOn": [],
+      "issues": []
+    },
+    {
+      "id": "FEAT-010",
+      "title": "Sorting",
+      "priority": "core",
+      "status": "idea",
+      "passes": false,
+      "why": "Users need to order rows by a column.",
+      "brainstormNotes": "Sorting uses the column type.",
+      "dependsOn": ["FEAT-006", "FEAT-007"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-011",
+      "title": "Pinned columns",
+      "priority": "core",
+      "status": "idea",
+      "passes": false,
+      "why": "In a wide table, key columns such as ID or name must stay visible while the user scrolls right.",
+      "brainstormNotes": "A column can be pinned to the left or the right. It stays in place during horizontal scrolling.",
+      "dependsOn": ["FEAT-005"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-012",
+      "title": "Column groups",
+      "priority": "core",
+      "status": "idea",
+      "passes": false,
+      "why": "Hundreds of columns are easier to read and use in named groups.",
+      "brainstormNotes": "Groups in the column config can have several levels. The user can expand and collapse a group. A collapsed group shows only the columns marked as its summary. If it has none, it shows as one narrow column with its name.",
+      "dependsOn": ["FEAT-005"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-013",
+      "title": "Hide and show columns",
+      "priority": "core",
+      "status": "idea",
+      "passes": false,
+      "why": "With hundreds of columns, users must choose which ones they see.",
+      "brainstormNotes": "The user hides and shows columns in a columns tool panel. The panel shows all columns as a tree with their groups, with show and hide checkboxes and a search box.",
+      "dependsOn": ["FEAT-006", "FEAT-012"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-014",
+      "title": "Free text search",
+      "priority": "core",
+      "status": "idea",
+      "passes": false,
+      "why": "Users need to find rows without knowing which column has the value.",
+      "brainstormNotes": "One search box searches the whole table. It uses the shown text of visible columns only. Results show in under 200ms at full scale.",
+      "dependsOn": ["FEAT-006", "FEAT-007"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-015",
+      "title": "Column filters",
+      "priority": "core",
+      "status": "idea",
+      "passes": false,
+      "why": "Users need to narrow rows by the values of one column.",
+      "brainstormNotes": "Text and category columns have a value list filter: a checkbox for each unique value and a search box. Number and date columns have a condition filter. Results show in under 200ms at full scale.",
+      "dependsOn": ["FEAT-006", "FEAT-007"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-016",
+      "title": "Row actions",
+      "priority": "core",
+      "status": "idea",
+      "passes": false,
+      "why": "Apps need buttons per row, such as Edit, which opens the app's own modal.",
+      "brainstormNotes": "An actions column, pinned right, shows the buttons from the config. A click calls onRowAction with the row, and the app opens its own modal.",
+      "dependsOn": ["FEAT-011"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-017",
+      "title": "Documentation",
+      "priority": "core",
+      "status": "idea",
+      "passes": false,
+      "why": "A public library needs docs to be used by others.",
+      "dependsOn": ["FEAT-002"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-018",
+      "title": "Pagination",
+      "priority": "later",
+      "status": "idea",
+      "passes": false,
+      "why": "Some apps want pages instead of one long scrolling list.",
+      "brainstormNotes": "Pagination is an optional mode. Without it, the table is one scrolling list.",
+      "dependsOn": ["FEAT-006"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-019",
+      "title": "Status bar",
+      "priority": "later",
+      "status": "idea",
+      "passes": false,
+      "why": "Users need to see how many rows match.",
+      "brainstormNotes": "A footer shows the total row count and the row count after filters.",
+      "dependsOn": ["FEAT-006"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-020",
+      "title": "CSV export",
+      "priority": "later",
+      "status": "idea",
+      "passes": false,
+      "why": "Users need to take the data they see to Excel or other tools.",
+      "brainstormNotes": "The export has the current view: filtered and sorted rows, and the visible columns only. It uses the column type.",
+      "dependsOn": ["FEAT-006", "FEAT-007"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-021",
+      "title": "Resize columns",
+      "priority": "later",
+      "status": "idea",
+      "passes": false,
+      "why": "Users want to change column widths by dragging.",
+      "brainstormNotes": "Dragging the edge of a header changes the column width.",
+      "dependsOn": ["FEAT-005", "FEAT-006"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-022",
+      "title": "Reorder columns",
+      "priority": "later",
+      "status": "idea",
+      "passes": false,
+      "why": "Users want to change the column order by dragging.",
+      "brainstormNotes": "Dragging a header moves the column. A column cannot be moved out of its group.",
+      "dependsOn": ["FEAT-012"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-023",
+      "title": "Row selection",
+      "priority": "later",
+      "status": "idea",
+      "passes": false,
+      "why": "Users want to select rows and act on them.",
+      "brainstormNotes": "A checkbox column selects rows, and a select all checkbox selects all rows. The app can get the selected rows.",
+      "dependsOn": ["FEAT-006", "FEAT-019"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-024",
+      "title": "Keyboard navigation",
+      "priority": "later",
+      "status": "idea",
+      "passes": false,
+      "why": "Users who do not use a mouse must be able to move between cells.",
+      "brainstormNotes": "The arrow keys move the focus between cells.",
+      "dependsOn": ["FEAT-005"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-025",
+      "title": "Row grouping",
+      "priority": "future",
+      "status": "idea",
+      "passes": false,
+      "why": "Group rows by the value of one column.",
+      "brainstormNotes": "Rows are grouped by the values of one column. Only one level for now.",
+      "dependsOn": ["FEAT-006"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-026",
+      "title": "Multi-level row grouping with totals",
+      "priority": "future",
+      "status": "idea",
+      "passes": false,
+      "why": "Group by several columns and show totals such as sum and average in group rows.",
+      "dependsOn": ["FEAT-025"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-027",
+      "title": "Master/detail",
+      "priority": "future",
+      "status": "idea",
+      "passes": false,
+      "why": "A row expands to show a detail panel below it.",
+      "dependsOn": ["FEAT-005"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-028",
+      "title": "Server-side data mode",
+      "priority": "future",
+      "status": "idea",
+      "passes": false,
+      "why": "Support data sets too large for the browser.",
+      "dependsOn": ["FEAT-006"],
+      "issues": []
+    },
+    {
+      "id": "FEAT-029",
+      "title": "Built-in row edit modal",
+      "priority": "future",
+      "status": "idea",
+      "passes": false,
+      "why": "Apps that do not want their own form could use a form generated from the column types.",
+      "dependsOn": ["FEAT-007", "FEAT-016"],
+      "issues": []
+    }
+  ]
+}
