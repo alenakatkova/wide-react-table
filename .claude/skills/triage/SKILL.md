@@ -44,6 +44,6 @@ TRIAGE-07 Check `docs/features.json`, `docs/progress/` and the "Depends on" sect
 
 ## End
 
-TRIAGE-08 Do not change code and do not commit. The only exception is a temporary test for TRIAGE-02, which is deleted before the end.
+TRIAGE-08 Do not change code. The only exception is a temporary test for TRIAGE-02, which is deleted before the end. Before the first file change in TRIAGE-06 or TRIAGE-07: if there are uncommitted changes, say so and stop. Fetch from the remote and create a branch from `origin/main` named with today's date, for example `docs/triage-2026-10-14`. If a branch or a pull request in any state has used the name (`gh pr list --state all --head <name>`), add `-2`, `-3` and so on. Commit the changes with the message `docs: triage <date>`. Labels and comments on GitHub need no branch.
 
-TRIAGE-09 The final reply gives the checked issues with their new labels, the recommended next item with its skill, and the problems found.
+TRIAGE-09 The final reply gives the branch if one was created, the checked issues with their new labels, the recommended next item with its skill, and the problems found.

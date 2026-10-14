@@ -28,6 +28,6 @@ SHAPE-08 After approval, add each feature to `docs/features.json` with the next 
 
 SHAPE-09 Do not put file paths or code in descriptions, notes or issues. They get old fast.
 
-SHAPE-10 Do not change code and do not commit.
+SHAPE-10 Do not change code. Before the first file change in SHAPE-06 or SHAPE-08: if there are uncommitted changes, say so and stop. Fetch from the remote and create a branch from `origin/main` named with today's date, for example `docs/shape-2026-10-14`. If a branch or a pull request in any state has used the name (`gh pr list --state all --head <name>`), add `-2`, `-3` and so on. Commit the changes with the message `docs: shape <short topic>`. Work that only creates issues needs no branch.
 
-SHAPE-11 The final reply lists the new features by id and the new issues by URL.
+SHAPE-11 The final reply gives the branch, and lists the new features by id and the new issues by URL.
