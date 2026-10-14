@@ -18,7 +18,7 @@ DESIGN-01 The argument must be one of these, otherwise say what is wrong and sto
 - the full id of a feature in `docs/features.json` with the status `refined` or `in-progress`, for example `FEAT-010`
 - an open GitHub issue as `ISSUE-xxx`, whose file `docs/progress/ISSUE-xxx.md` has acceptance items
 
-DESIGN-02 Read the progress file `docs/progress/FEAT-xxx.md` or `docs/progress/ISSUE-xxx.md`. Also read `docs/progress/README.md` and `CLAUDE.md`. If a plan exists and "Next step" does not start with "Plan again", say so and stop.
+DESIGN-02 Read the progress file `docs/progress/FEAT-xxx.md` or `docs/progress/ISSUE-xxx.md`. Also read `docs/progress/README.md`. If a plan exists and "Next step" does not start with "Plan again", say so and stop.
 
 DESIGN-03 Launch a subagent to find the code and the existing tests that the work touches, and read them. Follow a design chosen with `/design-it-twice` under "Notes".
 

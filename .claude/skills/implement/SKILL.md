@@ -18,7 +18,7 @@ IMPL-01 The argument must be one of these, otherwise say what is wrong and stop:
 - the full id of a feature in `docs/features.json` with the status `refined` or `in-progress`, for example `FEAT-010`
 - an open GitHub issue as `ISSUE-xxx`, whose file `docs/progress/ISSUE-xxx.md` has acceptance items
 
-IMPL-02 Read the progress file `docs/progress/FEAT-xxx.md` or `docs/progress/ISSUE-xxx.md`. For an issue, also read its "Depends on" section (`gh issue view <number>`). Also read `docs/progress/README.md` and `CLAUDE.md`. Stop and say why when:
+IMPL-02 Read the progress file `docs/progress/FEAT-xxx.md` or `docs/progress/ISSUE-xxx.md`. For an issue, also read its "Depends on" section (`gh issue view <number>`). Also read `docs/progress/README.md`. Stop and say why when:
 
 - there is no plan, or "Next step" starts with "Plan again": run `/design-it`
 - "Next step" starts with "Grill again before continuing": run `/grill`
