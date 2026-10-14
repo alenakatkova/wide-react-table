@@ -1,4 +1,4 @@
-See @README.md for project overview and @package.json for available pnpm commands for this project.
+See @README.md for project overview and @package.json for available pnpm commands for this project. See @docs/WORKFLOW.md for the order of the skills and when to run them.
 
 # Additional Instructions
 
