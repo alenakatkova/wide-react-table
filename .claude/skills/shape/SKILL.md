@@ -1,0 +1,33 @@
+---
+name: shape
+description: Turn an idea into planned features in docs/features.json or GitHub issues. Works on ideas from the current discussion, or starts an empty discussion with the user's thoughts.
+disable-model-invocation: true
+---
+
+# Shape an idea
+
+The result is new features in `docs/features.json` and new issues on GitHub, which the user has approved.
+
+## Rules
+
+SHAPE-01 Start from one of two places. If the session already discusses some ideas, write a short summary of what you understood and ask the user to confirm it. If the session is empty, ask the user to describe the idea.
+
+SHAPE-02 Read `docs/features.json`, `docs/progress/README.md`, and the open GitHub issues (`gh issue list`). Do not propose something that already exists. Show where the idea touches existing features.
+
+SHAPE-03 Discuss the idea with the user in normal conversation: help to understand it and to split it well, and give your opinion and other options. Never ask the user for a fact you can find yourself: launch a subagent to find it. The goal is to brainstorm the idea, not to write an exact spec: that is the job of `/grill`. What is decided becomes the brainstorm notes. For quick choices between options, use the AskUserQuestion tool. The user decides when the discussion is done.
+
+SHAPE-04 Split the idea into parts by result, not by layer. After each part, a user of the library can see or use something new, and tests check it. A split like "first all types, then all UI" is wrong, because nothing works after the first part.
+
+SHAPE-05 Each part is a feature or a GitHub issue. A new capability that belongs in the plan is a feature. A bug, or a small change to a feature that is already `done`, is an issue.
+
+SHAPE-06 If the new work changes what an existing but not done feature must do, include the feature in the proposal with the reason. After approval, for a `refined` or `in-progress` feature, add at the start of "Next step" in its file: "Grill again before continuing: <reason>." An `idea` feature needs no note, because `/grill` checks it before work starts.
+
+SHAPE-07 Show the proposal as a numbered list. For each item: feature or issue, title, priority, `dependsOn`, description, and brainstorm notes. `dependsOn` can name features (`FEAT-xxx`) and issues (`ISSUE-xxx`). Then the existing features from SHAPE-06. Ask if the dependencies are right, and if items should be merged, split, or changed between feature and issue. Change the list until the user approves it.
+
+SHAPE-08 After approval, add each feature to `docs/features.json` with the next free id, status `idea` and `passes: false`. If it has brainstorm notes, create `docs/progress/FEAT-xxx.md` from the template in `docs/progress/README.md` with only the "Brainstorm notes" section. Add the notes from SHAPE-06. Create each issue with `gh issue create` in dependency order, with the body from `.github/ISSUE_TEMPLATE/bug.md` or `.github/ISSUE_TEMPLATE/change.md`, and these labels: the category (`bug` or `enhancement`), `needs-triage`, and the priority (`priority: core`, `priority: later` or `priority: future`). Create a missing label with `gh label create`.
+
+SHAPE-09 Do not put file paths or code in descriptions, notes or issues. They get old fast.
+
+SHAPE-10 Do not change code and do not commit.
+
+SHAPE-11 The final reply lists the new features by id and the new issues by URL.

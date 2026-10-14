@@ -19,6 +19,10 @@ React, TypeScript, Vite, Vitest, React Testing Library, ESLint and Prettier.
 - `src/lib/` contains the library. `src/lib/index.ts` is its public API, so anything consumers use must be exported there.
 - `src/demo/` is a demo app that uses the library only through that public API.
 
+## Workflow
+
+Work on this project goes through Claude Code skills, from an idea to merged code. [docs/WORKFLOW.md](docs/WORKFLOW.md) describes the order of the skills and when to run them.
+
 ## Development
 
 Install dependencies:
