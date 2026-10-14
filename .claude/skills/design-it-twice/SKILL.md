@@ -18,6 +18,8 @@ TWICE-01 The argument must be one of these, otherwise say what is wrong and stop
 - the full id of a `refined` or `in-progress` feature in `docs/features.json`, for example `FEAT-010`
 - an open GitHub issue as `ISSUE-xxx`, whose file `docs/progress/ISSUE-xxx.md` has acceptance items
 
+Then choose the branch. If the current branch is an implement branch of this feature or issue, for example `feat/FEAT-010-1-single-sort`, offer to switch to a plan branch as in GRILL-02 in `.claude/skills/grill/SKILL.md`. If the user declines, stay on the current branch. On any other branch, follow GRILL-02.
+
 TWICE-02 Read the progress file `docs/progress/FEAT-xxx.md` or `docs/progress/ISSUE-xxx.md`. Also read the "Project-wide decisions" in `docs/progress/README.md`, and the features that depend on this one in `docs/features.json`.
 
 TWICE-03 If the file has a plan, show a numbered list in plain text: "1. The whole feature" (or issue), then each open task. The user answers with a number. The numbers are only for this answer and are not written anywhere. Without a plan, the scope is the whole feature or issue.
@@ -57,6 +59,6 @@ TWICE-08 After the choice, show what will change, and ask the user to approve it
 
 If the chosen design needs other acceptance items, refine them in this session: follow GRILL-04 to GRILL-13 from `.claude/skills/grill/SKILL.md`.
 
-TWICE-09 Do not write code, do not change the status, and do not commit.
+TWICE-09 Do not write code and do not change the status. Commit the changes on the branch with the message `docs: choose a design for FEAT-xxx` or `docs: choose a design for ISSUE-xxx`.
 
-TWICE-10 The final reply gives the feature id or the issue, the scope, and the chosen design in one sentence.
+TWICE-10 The final reply gives the branch, the feature id or the issue, the scope, and the chosen design in one sentence.

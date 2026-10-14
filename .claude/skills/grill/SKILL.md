@@ -18,7 +18,7 @@ GRILL-01 The argument must be one of these, otherwise say what is wrong and stop
 - the full id of a feature in `docs/features.json` with the status `idea`, `refined` or `in-progress`, for example `FEAT-010`
 - an open GitHub issue as `ISSUE-xxx`, where `xxx` is the issue number, with the state label `ready-to-refine`, `refined` or `in-progress`
 
-GRILL-02 Fetch from the remote and create a branch from `origin/main`, named with the id and `grill`, for example `docs/FEAT-010-grill` or `docs/ISSUE-xxx-grill`. If there are uncommitted changes, or the branch already exists, say so and stop.
+GRILL-02 Work on the plan branch of the feature or issue. If there are uncommitted changes, say so and stop. Fetch from the remote. If a branch `docs/FEAT-xxx-plan` or `docs/FEAT-xxx-plan-update-N` exists locally or on the remote and its pull request is not merged, switch to it. Otherwise create a branch from `origin/main`: `docs/FEAT-xxx-plan` the first time, then `docs/FEAT-xxx-plan-update-1`, `docs/FEAT-xxx-plan-update-2` and so on. A name is taken when a branch or a pull request in any state has used it (`gh pr list --state all --head <name>`). An issue uses the same names with `ISSUE-xxx`.
 
 GRILL-03 Before the first question, read `docs/progress/README.md`, and then:
 

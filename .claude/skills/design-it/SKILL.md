@@ -18,6 +18,8 @@ DESIGN-01 The argument must be one of these, otherwise say what is wrong and sto
 - the full id of a feature in `docs/features.json` with the status `refined` or `in-progress`, for example `FEAT-010`
 - an open GitHub issue as `ISSUE-xxx`, whose file `docs/progress/ISSUE-xxx.md` has acceptance items
 
+Then switch to the plan branch, or create it, as in GRILL-02 in `.claude/skills/grill/SKILL.md`.
+
 DESIGN-02 Read the progress file `docs/progress/FEAT-xxx.md` or `docs/progress/ISSUE-xxx.md`. Also read `docs/progress/README.md`. If a plan exists and "Next step" does not start with "Plan again", say so and stop.
 
 DESIGN-03 Launch a subagent to find the code and the existing tests that the work touches, and read them. Follow a design chosen with `/design-it-twice` under "Notes".
@@ -36,6 +38,6 @@ DESIGN-07 Change the plan until the user approves it.
 
 DESIGN-08 After approval, write the pull requests and their tasks to the progress file, as in the template in `docs/progress/README.md`, and the first task under "Next step", without a "Plan again" note. Write a design chosen in DESIGN-06 under "Notes", and the other design under "Rejected approaches" with the reason.
 
-DESIGN-09 Do not write code, do not change the status, and do not commit.
+DESIGN-09 Do not write code and do not change the status. Commit the changes on the branch with the message `docs: plan FEAT-xxx` or `docs: plan ISSUE-xxx`.
 
-DESIGN-10 The final reply gives the feature id or the issue, the pull requests with their tasks, and the next step: `/implement`.
+DESIGN-10 The final reply gives the branch, the feature id or the issue, the pull requests with their tasks, and the next step: `/implement`.

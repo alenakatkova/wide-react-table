@@ -31,12 +31,12 @@ How work moves from an idea to merged code, and which skill to run when. Each sk
 ### `/grill FEAT-xxx` or `/grill ISSUE-xxx`
 
 - **When:** before planning a feature or issue, or when "Next step" says "Grill again".
-- **Result:** a branch such as `docs/FEAT-xxx-grill`, with acceptance items in the progress file. An issue also gets a short "Refined" comment on GitHub.
+- **Result:** acceptance items in the progress file, committed on the plan branch. An issue also gets a short "Refined" comment on GitHub.
 
 ### `/design-it FEAT-xxx` or `/design-it ISSUE-xxx`
 
 - **When:** after `/grill`, or when "Next step" says "Plan again".
-- **Result:** pull requests and their tasks in the progress file.
+- **Result:** pull requests and their tasks in the progress file, committed on the plan branch. Merge it with `/pr` and `/pr merge` before `/implement`.
 
 ### `/design-it-twice FEAT-xxx` or `/design-it-twice ISSUE-xxx`
 
@@ -53,6 +53,20 @@ How work moves from an idea to merged code, and which skill to run when. Each sk
 - **`/pr`:** after `/implement`, or after any change on a branch. It pushes the branch, creates or updates a draft pull request, and runs a code review.
 - **`/pr ready`:** the same, and it marks the pull request ready for review.
 - **`/pr merge`:** when the pull request can go into `main`. It merges with a merge commit and deletes the branch.
+
+## Branches
+
+Every skill that changes files works on its own branch and commits there. No skill writes on `main`. `/pr` opens the pull request for the branch.
+
+| Skill                  | Branch                                                                                   |
+| ---------------------- | ---------------------------------------------------------------------------------------- |
+| `/shape`               | `docs/shape-2026-10-14`, with the date of the day                                        |
+| `/triage`              | `docs/triage-2026-10-14`, only when it changes files                                     |
+| `/grill`, `/design-it` | The plan branch `docs/FEAT-xxx-plan`. Both skills use the same branch until it is merged |
+| `/design-it-twice`     | The plan branch. During `/implement`, it offers to switch to a new plan branch           |
+| `/implement`           | `feat/FEAT-xxx-1-short-title`, one per pull request in the plan                          |
+
+`/implement` starts from `origin/main`, so the plan branch must be merged first. When the plan changes after that merge, the next plan branch is `docs/FEAT-xxx-plan-update-1`, then `docs/FEAT-xxx-plan-update-2`, and so on. Issues use the same names with `ISSUE-xxx`.
 
 ## Priorities
 
