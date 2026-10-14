@@ -18,36 +18,38 @@ GRILL-01 The argument must be one of these, otherwise say what is wrong and stop
 - the full id of a feature in `docs/features.json` with the status `idea`, `refined` or `in-progress`, for example `FEAT-010`
 - an open GitHub issue as `ISSUE-xxx`, where `xxx` is the issue number, with the state label `ready-to-refine`, `refined` or `in-progress`
 
-GRILL-02 Before the first question, read `docs/progress/README.md`, and then:
+GRILL-02 Work on the plan branch of the feature or issue. If there are uncommitted changes, say so and stop. Fetch from the remote. If a branch `docs/FEAT-xxx-plan` or `docs/FEAT-xxx-plan-update-N` exists locally or on the remote and its pull request is not merged, switch to it. Otherwise create a branch from `origin/main`: `docs/FEAT-xxx-plan` the first time, then `docs/FEAT-xxx-plan-update-1`, `docs/FEAT-xxx-plan-update-2` and so on. A name is taken when a branch or a pull request in any state has used it (`gh pr list --state all --head <name>`). An issue uses the same names with `ISSUE-xxx`.
+
+GRILL-03 Before the first question, read `docs/progress/README.md`, and then:
 
 - for a feature: the feature in `docs/features.json`, the features and issues in its `dependsOn`, and its file `docs/progress/FEAT-xxx.md` if it exists. The starting point is the brainstorm notes, or the acceptance items of a `refined` or `in-progress` feature. A note "Grill again before continuing" in "Next step" gives the reason for this grill.
 - for an issue: the issue with all comments (`gh issue view <number> --comments`), its file `docs/progress/ISSUE-xxx.md` if it exists, the features under "Related features", and their files in `docs/progress/`. The starting point is the acceptance items in its file, or the issue itself.
 
 ## Questions
 
-GRILL-03 Map the decisions as a tree: a decision that only makes sense after another one hangs under it. Each round asks every question whose decisions above it are settled. A question that depends on an answer from the same round waits for a later round. After each round, update the tree: answers can open new questions or remove others.
+GRILL-04 Map the decisions as a tree: a decision that only makes sense after another one hangs under it. Each round asks every question whose decisions above it are settled. A question that depends on an answer from the same round waits for a later round. After each round, update the tree: answers can open new questions or remove others.
 
-GRILL-04 Format of a round: numbered questions in plain text, not the AskUserQuestion tool. Each question has a short title, the question, and the recommended answer after "➡️". Word each question so that "yes" accepts the recommended answer. Then wait for the user's answers.
+GRILL-05 Format of a round: numbered questions in plain text, not the AskUserQuestion tool. Each question has a short title, the question, and the recommended answer after "➡️". Word each question so that "yes" accepts the recommended answer. Then wait for the user's answers.
 
-GRILL-05 Never ask the user for a fact you can find in the code, the docs or with tools. Use a subagent to find it. Do not wait for it: ask the other questions now, and only the questions that need the fact wait.
+GRILL-06 Never ask the user for a fact you can find in the code, the docs or with tools. Use a subagent to find it. Do not wait for it: ask the other questions now, and only the questions that need the fact wait.
 
-GRILL-06 Ask about what the user may have missed: unusual cases, how the work fits with other features, the public API, accessibility, and the scale goal in "Project-wide decisions" in `docs/progress/README.md`. For a feature, also ask if its `title`, `priority`, `description` and `dependsOn` are still right. For an issue, ask if its title and body are still right. Do not decide anything without asking.
+GRILL-07 Ask about what the user may have missed: unusual cases, how the work fits with other features, the public API, accessibility, and the scale goal in "Project-wide decisions" in `docs/progress/README.md`. For a feature, also ask if its `title`, `priority`, `description` and `dependsOn` are still right. For an issue, ask if its title and body are still right. Do not decide anything without asking.
 
-GRILL-07 Each acceptance item is one statement that one automated test can check: a unit test, a browser test or a benchmark.
+GRILL-08 Each acceptance item is one statement that one automated test can check: a unit test, a browser test or a benchmark.
 
 ## Approval
 
-GRILL-08 If an issue is too big and is really a new capability, propose to turn it into a new feature, with `title`, `priority`, `description` and `dependsOn`. The user decides. If the user decides not to build a feature, set its status to `dropped` in `docs/features.json`, write the reason under "Notes" in its progress file (create it from the template if it does not exist), and stop. If an issue needs answers from its reporter, replace its state label with `needs-info`, add a comment with the questions, and stop.
+GRILL-09 If an issue is too big and is really a new capability, propose to turn it into a new feature, with `title`, `priority`, `description` and `dependsOn`. The user decides. If the user decides not to build a feature, set its status to `dropped` in `docs/features.json`, write the reason under "Notes" in its progress file (create it from the template if it does not exist), and stop. If an issue needs answers from its reporter, replace its state label with `needs-info`, add a comment with the questions, and stop.
 
-GRILL-09 When no questions are left, show the full list for approval: acceptance items, and the changes to the feature's `title`, `priority`, `description` and `dependsOn`, or to the issue's title and body. Change it until the user approves.
+GRILL-10 When no questions are left, show the full list for approval: acceptance items, and the changes to the feature's `title`, `priority`, `description` and `dependsOn`, or to the issue's title and body. Change it until the user approves.
 
 ## Result
 
-GRILL-10 After approval, create or update the progress file `docs/progress/FEAT-xxx.md` or `docs/progress/ISSUE-xxx.md` from the template in `docs/progress/README.md`. Write the acceptance items under "Acceptance"; for a feature, they replace the brainstorm notes. Write the decisions that are not acceptance items under "Notes", and the options the user rejected under "Rejected approaches". Remove the "Grill again" note from "Next step". If the file has a plan and the acceptance items changed, add at the start of "Next step": "Plan again: acceptance items changed." A decision that applies to more than one feature goes under "Project-wide decisions" in `docs/progress/README.md`.
+GRILL-11 After approval, create or update the progress file `docs/progress/FEAT-xxx.md` or `docs/progress/ISSUE-xxx.md` from the template in `docs/progress/README.md`. Write the acceptance items under "Acceptance"; for a feature, they replace the brainstorm notes. Write the decisions that are not acceptance items under "Notes", and the options the user rejected under "Rejected approaches". Remove the "Grill again" note from "Next step". If the file has a plan and the acceptance items changed, add at the start of "Next step": "Plan again: acceptance items changed." A decision that applies to more than one feature goes under "Project-wide decisions" in `docs/progress/README.md`.
 
-GRILL-11 For a feature, in `docs/features.json`: the status becomes `refined`, except for an `in-progress` feature, which keeps its status. The approved changes to `title`, `priority`, `description` and `dependsOn` are made.
+GRILL-12 For a feature, in `docs/features.json`: the status becomes `refined`, except for an `in-progress` feature, which keeps its status. The approved changes to `title`, `priority`, `description` and `dependsOn` are made.
 
-GRILL-12 For an issue, make the approved changes to its title and body with `gh issue edit`, and replace its state label with `refined`. Then add a comment with `gh issue comment` in this form:
+GRILL-13 For an issue, make the approved changes to its title and body with `gh issue edit`, and replace its state label with `refined`. Then add a comment with `gh issue comment` in this form:
 
 ```markdown
 ## Refined
@@ -55,10 +57,10 @@ GRILL-12 For an issue, make the approved changes to its title and body with `gh 
 <A short summary of the agreed result in a few sentences.> The acceptance items are in `docs/progress/ISSUE-xxx.md`.
 ```
 
-GRILL-13 If the user approved turning the issue into a new feature, add it to `docs/features.json` with the next free id, status `refined` and `passes: false`, and the issue in a `fromIssue` field, for example `"fromIssue": "ISSUE-xxx"`. Write its file `docs/progress/FEAT-xxx.md` as in GRILL-10. Then replace the issue's state label with `moved-to-feature`, and add a comment: "Moved to FEAT-xxx." Do not close the issue.
+GRILL-14 If the user approved turning the issue into a new feature, add it to `docs/features.json` with the next free id, status `refined` and `passes: false`, and the issue in a `fromIssue` field, for example `"fromIssue": "ISSUE-xxx"`. Write its file `docs/progress/FEAT-xxx.md` as in GRILL-11. Then replace the issue's state label with `moved-to-feature`, and add a comment: "Moved to FEAT-xxx." Do not close the issue.
 
 ## End
 
-GRILL-14 Do not write code and do not commit.
+GRILL-15 Do not write code. Commit the changes on the branch with the message `docs: refine FEAT-xxx` or `docs: refine ISSUE-xxx`. If the user decided to drop the feature, use `docs: drop FEAT-xxx`.
 
-GRILL-15 The final reply gives the feature id or the issue, its new state, and the number of acceptance items.
+GRILL-16 The final reply gives the branch, the feature id or the issue, its new state, and the number of acceptance items.
