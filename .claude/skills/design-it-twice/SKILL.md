@@ -55,7 +55,7 @@ TWICE-08 After the choice, show what will change, and ask the user to approve it
 - with a plan and the whole feature or issue as the scope: add at the start of "Next step": "Plan again: the design changed."
 - with one task as the scope: replace that task, inside its pull request group, by one or more new tasks
 
-If the chosen design needs other acceptance items, refine them in this session: follow GRILL-03 to GRILL-12 from `.claude/skills/grill/SKILL.md`.
+If the chosen design needs other acceptance items, refine them in this session: follow GRILL-04 to GRILL-13 from `.claude/skills/grill/SKILL.md`.
 
 TWICE-09 Do not write code, do not change the status, and do not commit.
 

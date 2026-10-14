@@ -31,7 +31,7 @@ How work moves from an idea to merged code, and which skill to run when. Each sk
 ### `/grill FEAT-xxx` or `/grill ISSUE-xxx`
 
 - **When:** before planning a feature or issue, or when "Next step" says "Grill again".
-- **Result:** acceptance items in the progress file. An issue also gets a short "Refined" comment on GitHub.
+- **Result:** a branch such as `docs/FEAT-xxx-grill`, with acceptance items in the progress file. An issue also gets a short "Refined" comment on GitHub.
 
 ### `/design-it FEAT-xxx` or `/design-it ISSUE-xxx`
 
