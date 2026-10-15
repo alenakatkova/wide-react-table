@@ -22,7 +22,7 @@
 
 ## Next step
 
-PR 2: install `axe-core`.
+PR 3: add a seeded random number function in `src/test/`.
 
 ## Tasks
 
@@ -41,10 +41,10 @@ PR 2: install `axe-core`.
 
 ### PR 2: axe accessibility check
 
-- [ ] Install `axe-core`.
-- [ ] Add the helper `expectNoAccessibilityViolations(element, { disabledRule? })`. It checks the WCAG 2.0, 2.1 and 2.2 A and AA tags, and lists each violation in the failure message.
-- [ ] Add rule A-05 to CLAUDE.md.
-- [ ] Browser tests: `FEAT-004: axe check fails for a button with no label`, `FEAT-004: axe check passes for UI with no problems` and `FEAT-004: axe check skips the turned-off rule and still finds other problems`.
+- [x] Install `axe-core`.
+- [x] Add the helper `expectNoAccessibilityViolations(element, { disabledRule? })`. It checks the WCAG 2.0, 2.1 and 2.2 A and AA tags, and lists each violation in the failure message.
+- [x] Add rule A-05 to CLAUDE.md. It covers browser tests that render the library's UI, so the setup tests with plain elements need no axe check. The setup test that renders `WideTable` runs one.
+- [x] Browser tests: `FEAT-004: axe check fails for a button with no label`, `FEAT-004: axe check passes for UI with no problems` and `FEAT-004: axe check skips the turned-off rule and still finds other problems`.
 
 ### PR 3: Test data generator
 
@@ -74,7 +74,7 @@ PR 2: install `axe-core`.
 - Playwright starts headless Chromium with `--hide-scrollbars`, and that flag also hides the CSS-styled scroll bars. The config removes it on the Chromium instance only, so each browser has its own launch options. Checked on macOS: with the flag, the classic scroll bar test fails in Chromium, and WebKit passes without the setting.
 - axe runs only on small tables, for example 10 columns × 20 rows. On a full-scale table it is very slow and finds nothing new.
 - A test may turn off one axe rule only with a code comment that gives the reason. It never turns off all rules.
-- This feature adds rule A-05 to CLAUDE.md: "The library's UI must meet WCAG 2.2 level AA. Each browser test runs an axe check, and any problem that axe finds fails the test. When a feature adds UI, its acceptance items say how that UI works with the keyboard."
+- This feature adds rule A-05 to CLAUDE.md: "The library's UI must meet WCAG 2.2 level AA. Each browser test that renders the library's UI runs an axe check, and any problem that axe finds fails the test. When a feature adds UI, its acceptance items say how that UI works with the keyboard."
 - The benchmark runs on the developer's laptop, not in CI, because shared CI machines differ in speed from run to run.
 - A frame is dropped when it takes longer than about 16.7ms, which is one frame at 60 frames per second. The scroll goal is no more than 5% dropped frames.
 - The table has no virtual rendering yet, so the benchmark cannot run at full scale. The full-scale speed goals (500 × 100,000) become acceptance items of FEAT-005.
@@ -85,6 +85,8 @@ PR 2: install `axe-core`.
 - The benchmark is a Vitest project, so the 60-second limit, the error exit and new measurement files come with Vitest.
 
 ## Known problems
+
+- FEAT-001 (found with the new axe check, in Chromium and WebKit): when `WideTable` scrolls, axe reports `scrollable-region-focusable` (serious) for `.wide-table-container`. Keyboard users cannot reach the scroll area, because it does not take focus. A table with no columns has no such problem.
 
 - The browser tests have run only on macOS. On Linux, it is not checked yet that the imitated classic scroll bars work in headless Chromium and WebKit. The first CI run (FEAT-030) will show it.
 
