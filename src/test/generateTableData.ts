@@ -14,7 +14,8 @@ type ColumnKind = 'text' | 'number' | 'date'
 const columnKinds: ColumnKind[] = ['text', 'number', 'number', 'date', 'number', 'number']
 const emptyCellShare = 0.1
 
-// Text and dates come from fixed lists, so cells share strings and use less memory
+// Text and dates come from fixed lists. After `JSON.parse`, Chrome shares only short strings, about
+// 10 characters or fewer, so dates and short texts are shared and longer texts are not, like real data.
 const textValues = [
   'Alpha',
   'Bravo',
