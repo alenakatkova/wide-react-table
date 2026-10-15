@@ -86,7 +86,7 @@ PR 3: add a seeded random number function in `src/test/`.
 
 ## Known problems
 
-- FEAT-001 (found with the new axe check, in Chromium and WebKit): when `WideTable` scrolls, axe reports `scrollable-region-focusable` (serious) for `.wide-table-container`. Keyboard users cannot reach the scroll area, because it does not take focus. A table with no columns has no such problem.
+- FEAT-001 (found with the new axe check, in Chromium and WebKit): when `WideTable` scrolls, axe reports `scrollable-region-focusable` (serious) for `.wide-table-container`. Keyboard users cannot reach the scroll area, because it does not take focus. A table with no columns has no such problem. Decided: it stays for FEAT-001, whose browser tests will run axe and must fix it. Move this note to FEAT-001's progress file when its plan is redone.
 
 - The browser tests have run only on macOS. On Linux, it is not checked yet that the imitated classic scroll bars work in headless Chromium and WebKit. The first CI run (FEAT-030) will show it.
 
