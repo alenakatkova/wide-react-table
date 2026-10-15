@@ -20,6 +20,52 @@
 - A later feature can add a measurement with its own name and goal without changing the benchmark code.
 - On a table of 50 columns × 1,000 rows, `pnpm bench` finishes and reports every measurement.
 
+## Next step
+
+PR 1: install `@vitest/browser-playwright` and `playwright`.
+
+## Tasks
+
+### PR 1: Browser tests in Chromium, Firefox and WebKit
+
+- [ ] Install `@vitest/browser-playwright` and `playwright`.
+- [ ] Add the `browsers:install` script, which runs `playwright install chromium firefox webkit`, and use it in the README "Development" section. Its name must not start with `test:`, because `/pr` runs every `test:` script.
+- [ ] Split the Vitest config in `vite.config.ts` into the projects `unit` (jsdom, without `**/*.browser.test.tsx`) and `browser` (browser mode with the Playwright provider, Chromium, Firefox and WebKit, only `**/*.browser.test.tsx`).
+- [ ] Scripts: `test` runs `vitest --project unit`, `test:run` runs `vitest run --project unit`, and the new `test:browser` runs `vitest run --project browser`.
+- [ ] Split `src/test/setup.ts`: the `ResizeObserver` stub goes to a setup file for the `unit` project only. The jest-dom matchers and `cleanup` stay shared.
+- [ ] Add the browser test types to `tsconfig.app.json`.
+- [ ] Force classic scroll bars in every browser instance. Add a helper that a test calls to get overlay scroll bars: it sets `scrollbar-width: none` for the duration of the test.
+- [ ] Add `__screenshots__` and `.vitest-attachments` to `.gitignore`.
+- [ ] Browser test: `FEAT-004: reads the real size of a rendered element`.
+- [ ] Unit test `FEAT-004: unit tests run in jsdom` and browser test `FEAT-004: browser tests run in a real browser`.
+- [ ] Browser tests: `FEAT-004: classic scroll bars take space` and `FEAT-004: overlay scroll bars take no space`.
+
+### PR 2: axe accessibility check
+
+- [ ] Install `axe-core`.
+- [ ] Add the helper `expectNoAccessibilityViolations(element, { disabledRule? })`. It checks the WCAG 2.0, 2.1 and 2.2 A and AA tags, and lists each violation in the failure message.
+- [ ] Add rule A-05 to CLAUDE.md.
+- [ ] Browser tests: `FEAT-004: axe check fails for a button with no label`, `FEAT-004: axe check passes for UI with no problems` and `FEAT-004: axe check skips the turned-off rule and still finds other problems`.
+
+### PR 3: Test data generator
+
+- [ ] Add a seeded random number function in `src/test/`.
+- [ ] Add the generator of columns and rows for `WideTable`. Each column has one type: text, number or date. Some cells are empty.
+- [ ] Unit tests: `FEAT-004: makes the requested columns and rows with text, numbers, dates and empty values`, `FEAT-004: same seed gives the same data` and `FEAT-004: different seed gives different data`.
+
+### PR 4: Benchmark
+
+- [ ] Add the Vitest project `bench`: Chromium only, only `**/*.bench.tsx`. The script `bench` runs `vitest run --project bench`.
+- [ ] Add a browser command that slows the CPU by 2x through Chromium's DevTools connection.
+- [ ] Add the helper `measure({ name, goal, run })`: 5 runs, the median as the result, a stop after 60 seconds, and a failed test when the median misses the goal.
+- [ ] Add the measurements: first render time, and dropped frames during a 5-second steady scroll down and a 5-second steady scroll right. A frame counts as dropped when the time between two frames is longer than about 16.7ms, with a small allowance for timing noise.
+- [ ] Add a reporter that prints the result table: name, median, goal, pass or fail, and the machine's CPU model and memory.
+- [ ] Add the FEAT-004 measurements on a table of 50 × 1,000, made with the generator from PR 3.
+- [ ] Browser test: `FEAT-004: CPU slowdown makes the same work take longer`.
+- [ ] Unit tests: `FEAT-004: the result is the median of 5 runs`, `FEAT-004: the result table shows name, median, goal, pass or fail, CPU and memory`, `FEAT-004: a missed goal fails the measurement`, `FEAT-004: a measurement that runs too long is stopped and fails` and `FEAT-004: a measurement from a new file is found and run`.
+- [ ] Run `pnpm bench` and check that every FEAT-004 measurement is reported.
+- [ ] Set `passes: true` in `docs/features.json` when all tests above pass.
+
 ## Notes
 
 - Browser tests use Vitest browser mode with the Playwright provider. Chromium also covers Edge, because Edge uses the same engine.
@@ -31,7 +77,11 @@
 - The benchmark runs on the developer's laptop, not in CI, because shared CI machines differ in speed from run to run.
 - A frame is dropped when it takes longer than about 16.7ms, which is one frame at 60 frames per second. The scroll goal is no more than 5% dropped frames.
 - The table has no virtual rendering yet, so the benchmark cannot run at full scale. The full-scale speed goals (500 × 100,000) become acceptance items of FEAT-005.
-- CI is not part of this feature. Add it later as its own feature with `/shape`.
+- CI is not part of this feature. Add it later as its own feature with `/shape`. CI will run `pnpm test:browser`, but not `pnpm bench`.
+- Browser tests must pass headless on Linux, so that a later CI can run them. On Linux, Firefox uses overlay scroll bars by default, so it needs a setting to show classic ones.
+- Browser tests check sizes that come from the code, such as column widths, or compare sizes with each other. They never expect fixed text sizes, because fonts differ between macOS and Linux.
+- Scroll bar mode: every browser instance has classic scroll bars, and a test imitates overlay scroll bars with `scrollbar-width: none`. This works the same in each test and on each system.
+- The benchmark is a Vitest project, so the 60-second limit, the error exit and new measurement files come with Vitest.
 
 ## Rejected approaches
 
@@ -39,3 +89,5 @@
 - A separate Edge run: Edge uses the same engine as Chromium, and every machine that runs tests would need Edge installed.
 - CI in this feature: it is separate work.
 - A benchmark with no CPU slowdown, or with a 4x slowdown: 2x is closer to a normal laptop.
+- One browser instance per scroll bar mode, for example a second Chromium without `--hide-scrollbars`: it makes test runs longer, and the result depends more on the system.
+- A separate Node script that starts Chromium with Playwright for the benchmark: the time limit, the error exit and finding new measurement files would need to be written by hand.
