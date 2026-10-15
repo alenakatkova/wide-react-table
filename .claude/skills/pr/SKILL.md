@@ -27,7 +27,7 @@ PR-02 The current branch must not be `main`. All work must be committed.
 
 PR-03 Fetch from the remote. If the branch does not contain `origin/main`, merge `origin/main` into it. If the merge has a conflict, resolve it, then show each resolved block next to both original versions and ask the user to approve it. Commit only after approval. If the user rejects it, run `git merge --abort` and stop.
 
-PR-04 The branch must follow every instruction in its `CLAUDE.md`. Read the file again before this check. Do not use an earlier version from memory.
+PR-04 The branch must follow every instruction in its `CLAUDE.md`. Read the file again before this check. Do not use an earlier version from memory. Also check that every comment the diff adds or changes is true for the code next to it. Fix a wrong comment right away in its own commit, without asking.
 
 PR-05 The task of a branch is what its name says. Every change in `git diff origin/main...HEAD` must belong to that task. The diff must not contain debug code or commented-out code. For a change outside the task, the solutions are to move it to its own branch from `origin/main`, or to keep it and name it in the Summary as a separate change.
 

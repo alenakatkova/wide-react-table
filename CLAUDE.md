@@ -14,6 +14,8 @@ A-05 The library's UI must meet WCAG 2.2 level AA. Each browser test that render
 
 A-06 When code turns off a check, a comment next to it says why. This applies to an axe rule, a lint rule, a type check, or a skipped test.
 
+A-07 Code, test names, comments, commit messages and pull request titles use only characters that are on a normal keyboard: `-` and not `−` or `–`, `x` and not `×`, `->` and not `→`, and straight quotes `"` `'` and not curly ones. Values, such as test data or text that the UI shows, can use any characters.
+
 # Working rules
 
 W-01 Name features and issues by their full id, such as `FEAT-010` or `ISSUE-15`, never by a short form such as "010" or a range such as "018 to 025". In rules and templates, the placeholders are `FEAT-xxx` and `ISSUE-xxx`.
