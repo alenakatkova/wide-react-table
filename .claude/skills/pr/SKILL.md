@@ -1,6 +1,6 @@
 ---
 name: pr
-description: Push the current branch and open or update its draft pull request. `/pr ready` also marks the pull request ready for review. `/pr merge` merges an open pull request.
+description: Push the current branch and open or update its draft pull request. `/pr ready` also marks the pull request ready for review. `/pr merge` merges an open pull request, and for a documents-only change it also creates the pull request first.
 argument-hint: '[ready | merge]'
 disable-model-invocation: true
 ---
@@ -11,7 +11,8 @@ The argument is "$ARGUMENTS".
 
 - Empty: run PR-02 to PR-08, then PR-14 and PR-10.
 - `ready`: run PR-02 to PR-08, mark the pull request ready for review, then PR-14 and PR-10.
-- `merge`: run PR-02 to PR-07, then PR-09 and PR-10.
+- `merge`, for a documents-only change: run PR-02 to PR-08, then PR-09 and PR-10, so the pull request can be created and merged in one step.
+- `merge`, for any other change: run PR-02 to PR-07, then PR-09 and PR-10. The pull request must already exist, and every commit except the merge from PR-03 must already be pushed. Otherwise it is a problem, and the solution is to run `/pr` first, so that the change gets its code review.
 - Anything else: a problem.
 
 A problem is a broken rule, a failed check or a push that needs force.
@@ -32,7 +33,7 @@ PR-05 The task of a branch is what its name says. Every change in `git diff orig
 
 PR-06 `pnpm build`, `pnpm lint`, `pnpm format:check` and every package.json script whose name starts with `test:` must pass on the final commit. For a documents-only change, run only `pnpm format:check`. When a test fails, name the feature or issue it belongs to from the start of its name, for example `FEAT-010:` or `ISSUE-xxx:`. Besides fixing it, offer this solution: keep the failing test, and for a feature set `passes: false` in `docs/features.json`. For a closed issue, reopen it, replace its state label with `in-progress`, and add the failing test under "Known problems" in `docs/progress/ISSUE-xxx.md`.
 
-PR-07 Push. With the `merge` argument, the only commit to push is the merge from PR-03. Any other unpushed commit is a problem.
+PR-07 Push. With the `merge` argument, the only commit to push is the merge from PR-03, and any other unpushed commit is a problem. A documents-only change is the exception: all its commits are pushed.
 
 PR-08 The pull request goes from the current branch into `main`. A branch has one pull request. A new pull request is always a draft. Its title is one Conventional Commit line for the whole branch, and its description follows the template below and matches the current branch. If the pull request exists, update its title and description.
 
