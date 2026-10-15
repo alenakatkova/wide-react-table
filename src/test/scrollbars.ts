@@ -7,21 +7,23 @@ const classicScrollbarSize = '15px'
 const classicScrollbarStyleId = 'imitated-classic-scrollbars'
 export const overlayScrollbarStyleId = 'imitated-overlay-scrollbars'
 
-function addStyle(css: string) {
+function addStyleOnce(id: string, css: string) {
+  if (document.getElementById(id)) return
+
   const style = document.createElement('style')
+  style.id = id
   style.textContent = css
   document.head.append(style)
-  return style
 }
 
 export function imitateClassicScrollbars() {
-  if (document.getElementById(classicScrollbarStyleId)) return
-
-  const style = addStyle(`
+  addStyleOnce(
+    classicScrollbarStyleId,
+    `
     ::-webkit-scrollbar { width: ${classicScrollbarSize}; height: ${classicScrollbarSize}; }
     ::-webkit-scrollbar-thumb { background: #999; }
-  `)
-  style.id = classicScrollbarStyleId
+  `,
+  )
 }
 
 // For the current test only, so call it inside a test, not in `beforeAll` or at the top of a file:
@@ -31,7 +33,7 @@ export function imitateClassicScrollbars() {
 export function imitateOverlayScrollbars() {
   if (document.getElementById(overlayScrollbarStyleId)) return
 
-  const style = addStyle('* { scrollbar-width: none !important; }')
-  style.id = overlayScrollbarStyleId
-  onTestFinished(() => style.remove())
+  // Registered before the style is added, so a call outside a test fails without leaving the style behind
+  onTestFinished(() => document.getElementById(overlayScrollbarStyleId)?.remove())
+  addStyleOnce(overlayScrollbarStyleId, '* { scrollbar-width: none !important; }')
 }

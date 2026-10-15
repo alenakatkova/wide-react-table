@@ -12,7 +12,7 @@ Work in progress. All features, with their priority and status, are listed in [d
 
 ## Browsers
 
-Tested in Chrome, Edge and Safari. Firefox is not tested.
+Tested in Chromium and WebKit, the engines of Chrome, Edge and Safari. Firefox is not tested.
 
 ## Tech stack
 

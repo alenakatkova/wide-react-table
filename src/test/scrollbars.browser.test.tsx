@@ -3,7 +3,7 @@ import { describe, expect, it, onTestFinished } from 'vitest'
 import {
   measureScrollbarSizes,
   OVERLAY_SCROLLBAR_MAX_SIZE,
-} from '../lib/WideTable/useOverlayScrollbarSpace'
+} from '../lib/WideTable/measureScrollbarSizes'
 import { imitateOverlayScrollbars, overlayScrollbarStyleId } from './scrollbars'
 
 function renderScrollingContainer() {
@@ -23,17 +23,18 @@ describe('scroll bars in browser tests', () => {
     imitateOverlayScrollbars()
     const container = renderScrollingContainer()
 
-    expect(measureScrollbarSizes(container).verticalScrollbarWidth).toBeLessThanOrEqual(
-      OVERLAY_SCROLLBAR_MAX_SIZE,
-    )
+    expect(measureScrollbarSizes(container)).toEqual({
+      verticalScrollbarWidth: 0,
+      horizontalScrollbarHeight: 0,
+    })
   })
 
   it('FEAT-004: classic scroll bars take space', () => {
     const container = renderScrollingContainer()
 
-    expect(measureScrollbarSizes(container).verticalScrollbarWidth).toBeGreaterThan(
-      OVERLAY_SCROLLBAR_MAX_SIZE,
-    )
+    const { verticalScrollbarWidth, horizontalScrollbarHeight } = measureScrollbarSizes(container)
+    expect(verticalScrollbarWidth).toBeGreaterThan(OVERLAY_SCROLLBAR_MAX_SIZE)
+    expect(horizontalScrollbarHeight).toBeGreaterThan(OVERLAY_SCROLLBAR_MAX_SIZE)
   })
 
   it('FEAT-004: choosing overlay scroll bars twice adds one style', () => {

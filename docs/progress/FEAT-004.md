@@ -69,7 +69,7 @@ PR 2: install `axe-core`.
 ## Notes
 
 - Browser tests use Vitest browser mode with the Playwright provider, in Chromium and WebKit. Chromium also covers Edge, because Edge uses the same engine.
-- Firefox is not tested. Playwright's Firefox hides its scroll bars with a browser rule: `scrollbar-width` is `none` on every element, and even `scrollbar-width: auto !important` from the page does not change it. So a test cannot choose the scroll bar mode there, and layout tests with scroll bars would check a different case than in the other browsers. The README says "Tested in Chrome, Edge and Safari. Firefox is not tested."
+- Firefox is not tested. Playwright's Firefox hides its scroll bars with a browser rule: `scrollbar-width` is `none` on every element, and even `scrollbar-width: auto !important` from the page does not change it. So a test cannot choose the scroll bar mode there, and layout tests with scroll bars would check a different case than in the other browsers. The README says "Tested in Chromium and WebKit, the engines of Chrome, Edge and Safari. Firefox is not tested."
 - Browser test files are named `*.browser.test.tsx`, or `*.browser.test.ts` without JSX. A test of a component sits next to the component. Tests of the test setup itself sit in `src/test/`.
 - Browser tests run on a page of 1280 × 800. Vitest's default page is 414px wide, so a wide table would make the page itself scroll.
 - Playwright starts headless Chromium with `--hide-scrollbars`, and that flag also hides the CSS-styled scroll bars. The config removes it. Checked on macOS: with the flag, the classic scroll bar test fails in Chromium.
@@ -82,7 +82,7 @@ PR 2: install `axe-core`.
 - CI is not part of this feature. Add it later as its own feature with `/shape`. CI will run `pnpm test:browser`, but not `pnpm bench`.
 - Browser tests must pass headless on Linux, so that a later CI can run them.
 - Browser tests check sizes that come from the code, such as column widths, or compare sizes with each other. They never expect fixed text sizes, because fonts differ between macOS and Linux.
-- Scroll bar mode: on macOS, headless Chromium and WebKit use overlay scroll bars, and no launch setting changes that. So both modes are imitated with CSS. Every browser test has classic scroll bars from `::-webkit-scrollbar` styles with a fixed width, and a test imitates overlay scroll bars with `scrollbar-width: none`. This should work the same on macOS and Linux.
+- Scroll bar mode: on macOS, headless Chromium and WebKit use overlay scroll bars, and no launch setting changes that. So both modes are imitated with CSS. Every browser test has classic scroll bars from `::-webkit-scrollbar` styles with a fixed width, and a test imitates overlay scroll bars with `scrollbar-width: none`. This should work the same on macOS and Linux. Chromium ignores `::-webkit-scrollbar` styles on an element that has `scrollbar-width` or `scrollbar-color`. So if the library CSS ever sets one of them, for example for theming, its elements lose the imitated classic scroll bars, and layout tests of the classic case must be checked again.
 - The benchmark is a Vitest project, so the 60-second limit, the error exit and new measurement files come with Vitest.
 
 ## Known problems
