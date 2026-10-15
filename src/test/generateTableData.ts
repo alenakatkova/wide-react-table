@@ -62,8 +62,9 @@ function assertWholeCount(name: string, count: number) {
 
 /**
  * Makes columns and rows for `WideTable` tests and the benchmark. Two of every three columns are
- * number columns, the others are text and date columns, and about one cell in ten is `null`. Text columns also have empty
- * strings, so about one text cell in five looks empty. The same seed always gives the same data.
+ * number columns, the others are text and date columns, and about one cell in ten is `null`.
+ * Text columns also have empty strings, so about one text cell in five looks empty.
+ * The same seed always gives the same data.
  */
 export function generateTableData(options: {
   columnCount: number
