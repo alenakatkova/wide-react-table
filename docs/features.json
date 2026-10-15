@@ -31,7 +31,7 @@
       "id": "FEAT-004",
       "title": "Test setup for browser and speed tests",
       "priority": "core",
-      "status": "refined",
+      "status": "in-progress",
       "passes": false,
       "description": "jsdom does no layout, so layout and speed acceptance items need a real browser. Without these tests, no such item can pass.",
       "dependsOn": []

@@ -12,7 +12,7 @@ Work in progress. All features, with their priority and status, are listed in [d
 
 ## Tech stack
 
-React, TypeScript, Vite, Vitest, React Testing Library, ESLint and Prettier.
+React, TypeScript, Vite, Vitest (with browser mode and Playwright), React Testing Library, ESLint and Prettier.
 
 ## Project structure
 
@@ -49,10 +49,22 @@ Check formatting:
 pnpm format:check
 ```
 
-Run tests:
+Run unit tests:
 
 ```bash
 pnpm test:run
+```
+
+Install the browsers for browser tests (Chromium, Firefox and WebKit), once and after each Playwright update:
+
+```bash
+pnpm browsers:install
+```
+
+Run browser tests:
+
+```bash
+pnpm test:browser
 ```
 
 Create a production build:
