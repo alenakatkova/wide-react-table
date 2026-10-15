@@ -36,6 +36,13 @@ describe('scroll bars in browser tests', () => {
     )
   })
 
+  it('FEAT-004: choosing overlay scroll bars twice adds one style', () => {
+    imitateOverlayScrollbars()
+    imitateOverlayScrollbars()
+
+    expect(document.querySelectorAll(`#${overlayScrollbarStyleId}`)).toHaveLength(1)
+  })
+
   it('FEAT-004: overlay scroll bars end with their test', () => {
     // Registered before the helper's own cleanup, so it runs after it: Vitest runs these callbacks in reverse order
     onTestFinished(() => {

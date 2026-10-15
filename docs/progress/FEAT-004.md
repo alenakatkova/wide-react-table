@@ -38,7 +38,7 @@ PR 2: install `axe-core`.
 - [x] Add `__screenshots__` and `.vitest-attachments` to `.gitignore`.
 - [x] Browser test: `FEAT-004: reads the real size of a rendered element`.
 - [x] Unit test `FEAT-004: unit tests run in jsdom` and browser test `FEAT-004: browser tests run in a real browser`.
-- [x] Browser tests: `FEAT-004: classic scroll bars take space`, `FEAT-004: overlay scroll bars take no space` and `FEAT-004: overlay scroll bars end with their test`.
+- [x] Browser tests: `FEAT-004: classic scroll bars take space`, `FEAT-004: overlay scroll bars take no space`, `FEAT-004: choosing overlay scroll bars twice adds one style` and `FEAT-004: overlay scroll bars end with their test`.
 
 ### PR 2: axe accessibility check
 

@@ -24,9 +24,13 @@ export function imitateClassicScrollbars() {
   style.id = classicScrollbarStyleId
 }
 
-// For the current test only. In Chromium and WebKit, `scrollbar-width` wins over `::-webkit-scrollbar` styles.
+// For the current test only, so call it inside a test, not in `beforeAll` or at the top of a file:
+// the cleanup is registered with `onTestFinished`, which needs a running test.
+// In Chromium and WebKit, `scrollbar-width` wins over `::-webkit-scrollbar` styles.
 // `!important`, because the `*` selector would lose to any other rule that sets `scrollbar-width`.
 export function imitateOverlayScrollbars() {
+  if (document.getElementById(overlayScrollbarStyleId)) return
+
   const style = addStyle('* { scrollbar-width: none !important; }')
   style.id = overlayScrollbarStyleId
   onTestFinished(() => style.remove())
