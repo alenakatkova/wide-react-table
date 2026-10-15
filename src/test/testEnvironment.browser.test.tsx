@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { WideTable, type WideTableColumn } from '../lib'
+import { expectNoAccessibilityViolations } from './accessibility'
 
 interface Row {
   id: number
@@ -13,13 +14,13 @@ describe('browser test environment', () => {
     expect(navigator.userAgent).toContain('Safari')
   })
 
-  it('FEAT-004: reads the real size of a rendered element', () => {
+  it('FEAT-004: reads the real size of a rendered element', async () => {
     const columns: WideTableColumn<Row>[] = [
       { key: 'id', title: 'ID', width: 100 },
       { key: 'name', title: 'Name', width: 150 },
     ]
 
-    render(
+    const { container } = render(
       <WideTable columns={columns} rows={[{ id: 1, name: 'First' }]} getRowKey={(row) => row.id} />,
     )
 
@@ -28,5 +29,6 @@ describe('browser test environment', () => {
       .getAllByRole('columnheader')
       .map((headerCell) => headerCell.getBoundingClientRect().width)
     expect(headerCellWidths).toEqual([100, 150])
+    await expectNoAccessibilityViolations(container)
   })
 })
