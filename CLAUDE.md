@@ -23,3 +23,5 @@ W-02 Run project tools only through the scripts in `package.json`, such as `pnpm
 W-03 Change and inspect files only with the Edit, Write and Read tools, never with `node` scripts or `node -e`. Edit and Write show each change.
 
 W-04 Each shell command does one thing. Do not add pipes, reads or checks to a command that writes, such as a commit, a push or `gh pr edit`, when its own output already shows the result.
+
+W-05 Product decisions are the user's: what the library supports, its public API, the README text, priorities, and dropping a feature. Ask with options and a recommendation, and do not decide them alone.
