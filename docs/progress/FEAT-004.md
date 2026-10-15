@@ -77,7 +77,7 @@ PR 3: add a seeded random number function in `src/test/`.
 - A test may turn off one axe rule only with a code comment that gives the reason (rule A-06). It never turns off all rules.
 - The axe check fails only on violations. Cases that axe cannot decide (`incomplete`, most often color contrast over a background that axe cannot see) are ignored on purpose, because many of them are fine.
 - axe cannot run two checks at the same time on one page, so the helper queues its checks, for example for `it.concurrent`. A test must still `await` the check: without it, the check runs after the test has ended and its elements are removed. ISSUE-19 adds a lint rule that finds a missing `await`.
-- The helper fails when `disabledRule` is not one of the WCAG A and AA rules that it runs, because turning off such a rule would do nothing. This includes experimental and deprecated rules: they have WCAG tags, but a run by tag skips them. axe itself already fails on a misspelled rule id.
+- The helper fails when `disabledRule` is not one of the WCAG A and AA rules that it runs, because turning off such a rule would do nothing. This includes experimental and deprecated rules: they have WCAG tags, but a run by tag skips them. It also includes an empty name. axe itself already fails on a misspelled rule id. Not caught: page-level rules such as `bypass`, `html-has-lang` and `document-title`. They never run on an element, so turning one of them off does nothing.
 - axe fails on an element that is no longer on the page, with the unclear message "No elements found for include in frame Context". So a check that runs too late, after a missing `await`, never passes silently.
 - The tests of the helper check only whether a check passes or fails, where they can, not the text of its message, so a change of wording cannot break them.
 - The axe check covers only the element that is passed in. UI that a later feature draws in a portal, such as a menu in `document.body`, needs its own check. The first feature with a portal decides how.
@@ -100,6 +100,7 @@ PR 3: add a seeded random number function in `src/test/`.
 
 - A separate Playwright Test runner: Vitest browser mode keeps one test API for unit and browser tests.
 - Failing the axe check on `incomplete` results: these are cases that axe cannot decide, and they are often fine, so failing on them would cost time for little gain.
+- Leaving page-level axe rules out of the check of `disabledRule`: axe does not show which rules are page-level in its public functions, so this would need its internal data, which can change in any axe update. Turning off a page-level rule in a table test is unlikely.
 - A guard in the helper that fails with a clear message when the element is no longer on the page: axe already fails in that case, so the guard would only change the message, and no test could show the difference without reading the message.
 - A code comment instead of the axe queue: the queue lets checks overlap safely, for example in `it.concurrent`, without a rule for the caller to remember.
 - Adding browser test types to `tsconfig.app.json` (a planned task in PR 1): not needed, because the browser tests import only `vitest` and Testing Library, which have their own types.

@@ -49,6 +49,8 @@ describe('accessibility check in browser tests', () => {
     await expect(
       expectNoAccessibilityViolations(container, { disabledRule: 'css-orientation-lock' }),
     ).rejects.toThrow()
+    // An empty name is not a rule, so it must not be read as "no rule turned off"
+    await expect(expectNoAccessibilityViolations(container, { disabledRule: '' })).rejects.toThrow()
   })
 
   it('FEAT-004: axe check fails when the element is no longer on the page', async () => {

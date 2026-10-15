@@ -11,7 +11,9 @@ function describeViolation(violation: axe.Result) {
   return `${violation.id} (${violation.impact ?? 'unknown impact'}): ${violation.help}. Elements: ${elements}`
 }
 
-// A run by tag skips experimental and deprecated rules, although `getRules` returns them
+// A run by tag skips experimental and deprecated rules, although `getRules` returns them.
+// Page-level rules, such as `bypass`, `html-has-lang` and `document-title`, are still in this list,
+// but they never run on an element, so turning one of them off does nothing and is not caught here.
 function getCheckedRuleIds() {
   return axe
     .getRules(wcagLevelAAndAATags)
@@ -20,7 +22,7 @@ function getCheckedRuleIds() {
 }
 
 async function runAccessibilityCheck(element: Element, disabledRule: string | undefined) {
-  if (disabledRule && !getCheckedRuleIds().includes(disabledRule)) {
+  if (disabledRule !== undefined && !getCheckedRuleIds().includes(disabledRule)) {
     throw new Error(
       `"${disabledRule}" is not one of the WCAG A and AA rules that this check runs, so turning it off does nothing`,
     )
@@ -28,7 +30,7 @@ async function runAccessibilityCheck(element: Element, disabledRule: string | un
 
   const results = await axe.run(element, {
     runOnly: { type: 'tag', values: wcagLevelAAndAATags },
-    rules: disabledRule ? { [disabledRule]: { enabled: false } } : {},
+    rules: disabledRule !== undefined ? { [disabledRule]: { enabled: false } } : {},
     resultTypes: ['violations'],
   })
 
