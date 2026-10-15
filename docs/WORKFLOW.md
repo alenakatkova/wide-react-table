@@ -52,7 +52,7 @@ How work moves from an idea to merged code, and which skill to run when. Each sk
 
 - **`/pr`:** after `/implement`, or after any change on a branch. It pushes the branch, creates or updates a draft pull request, and runs a code review.
 - **`/pr ready`:** the same, and it marks the pull request ready for review.
-- **`/pr merge`:** when the pull request can go into `main`. It merges with a merge commit and deletes the branch.
+- **`/pr merge`:** when the pull request can go into `main`. It merges with a merge commit and deletes the branch. For a change to documents only, it can run without `/pr` first: it creates the pull request and merges it in one step. A change to code always needs `/pr` first, so that it gets a code review.
 
 ## Branches
 
