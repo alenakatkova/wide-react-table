@@ -13,3 +13,13 @@ A-04 Every GitHub issue and comment that Claude writes starts with the line "_Th
 A-05 The library's UI must meet WCAG 2.2 level AA. Each browser test that renders the library's UI runs an axe check, and any violation that axe reports fails the test. When a feature adds UI, its acceptance items say how that UI works with the keyboard.
 
 A-06 When code turns off a check, a comment next to it says why. This applies to an axe rule, a lint rule, a type check, or a skipped test.
+
+# Working rules
+
+W-01 Name features and issues by their full id, such as `FEAT-010` or `ISSUE-15`, never by a short form such as "010" or a range such as "018 to 025". In rules and templates, the placeholders are `FEAT-xxx` and `ISSUE-xxx`.
+
+W-02 Run project tools only through the scripts in `package.json`, such as `pnpm lint` or `pnpm test:run`, as they are. Do not use `npx`, `pnpm exec`, or a script with extra file arguments when a script already covers the check.
+
+W-03 Change and inspect files only with the Edit, Write and Read tools, never with `node` scripts or `node -e`. Edit and Write show each change.
+
+W-04 Each shell command does one thing. Do not add pipes, reads or checks to a command that writes, such as a commit, a push or `gh pr edit`, when its own output already shows the result.

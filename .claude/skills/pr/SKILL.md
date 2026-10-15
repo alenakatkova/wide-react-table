@@ -35,7 +35,7 @@ PR-06 `pnpm build`, `pnpm lint`, `pnpm format:check` and every package.json scri
 
 PR-07 Push. With the `merge` argument, the only commit to push is the merge from PR-03, and any other unpushed commit is a problem. A documents-only change is the exception: all its commits are pushed.
 
-PR-08 The pull request goes from the current branch into `main`. A branch has one pull request. A new pull request is always a draft. Its title is one Conventional Commit line for the whole branch, and its description follows the template below and matches the current branch. If the pull request exists, update its title and description.
+PR-08 The pull request goes from the current branch into `main`. A branch has one pull request. A new pull request is always a draft. Its title is one Conventional Commit line for the whole branch, and its description follows the template below and matches the current branch. If the pull request exists, update its title and description. Never rename the branch of an open pull request: GitHub then closes the pull request, and it cannot be reopened.
 
 PR-09 The pull request must be open. If it is a draft, mark it ready for review. Merge with a merge commit, delete the branch, and switch to an updated `main`. Do not change the description.
 
@@ -76,4 +76,4 @@ Easy to undo: <yes or no>. Affects: <what can break>.
 
 ## Code review
 
-PR-14 Run the `/code-review` skill at level `medium` on the pull request. Skip it for a documents-only change. Show its findings. Do not post them to the pull request and do not fix them: the user decides what to fix.
+PR-14 Run the `/code-review` skill at level `medium` on the pull request. Skip it for a documents-only change. Show its findings. Do not post them to the pull request and do not fix them: the user decides what to fix. Before showing the findings, read the open GitHub issues (`gh issue list`), and show the findings that an open issue fully or partly covers in a separate list, with the issue number.
