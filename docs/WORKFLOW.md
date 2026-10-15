@@ -65,6 +65,7 @@ Every skill that changes files works on its own branch and commits there. No ski
 | `/grill`, `/design-it` | The plan branch `docs/FEAT-xxx-plan`. Both skills use the same branch until it is merged |
 | `/design-it-twice`     | The plan branch. During `/implement`, it offers to switch to a new plan branch           |
 | `/implement`           | `feat/FEAT-xxx-1-short-title`, one per pull request in the plan                          |
+| A rule or skill change | `chore/short-title`, from `origin/main`, never on a feature branch                       |
 
 `/implement` starts from `origin/main`, so the plan branch must be merged first. When the plan changes after that merge, the next plan branch is `docs/FEAT-xxx-plan-update-1`, then `docs/FEAT-xxx-plan-update-2`, and so on. Issues use the same names with `ISSUE-xxx`.
 

@@ -30,7 +30,7 @@ IMPL-03 Work on the next pull request in the plan that is not merged. Create its
 
 IMPL-04 Work task by task. Before a task starts, mark it "In progress:". When it is done, check it off and update "Next step". Write decisions under "Notes", problems under "Known problems", and what was tried and dropped under "Rejected approaches". Do not repeat the git history.
 
-IMPL-05 Do only the tasks of this pull request. A new idea goes to the user as a suggestion for `/shape`. A bug in another feature goes under "Known problems".
+IMPL-05 Do only the tasks of this pull request. A new idea goes to the user as a suggestion for `/shape`. A bug in another feature goes under "Known problems". A finding or decision that changes what another feature must do goes as a note into that feature's progress file, starting with "From FEAT-xxx:" or "From ISSUE-xxx:".
 
 IMPL-06 Stop and ask the user when an acceptance item is unclear, when it is not clear how to build a task (suggest `/design-it-twice`), or when the work needs a change to the public API that the acceptance items do not name.
 
@@ -40,7 +40,7 @@ IMPL-07 Commit when a working state with passing tests is reached, as a Conventi
 
 IMPL-08 Each acceptance item has at least one test whose name starts with the feature id or the issue, for example `FEAT-010: sorts numbers by value` or `ISSUE-xxx: keeps the header line after a resize`. Layout items use browser tests, speed items use the benchmark, and everything else uses unit tests.
 
-IMPL-09 A test checks behavior through the public API (props, the rendered page, exported functions), not internal details. Before the code for an item is written, run its test once and see it fail. A test that never failed may check nothing.
+IMPL-09 A test checks behavior through the public API (props, the rendered page, exported functions), not internal details. Before the code for an item is written, run its test once and see it fail. A test that never failed may check nothing. When a test passes from the start, or the code changes after its first run, break the code on purpose for one run, for example remove the guard, the cleanup or the value that the test is about, see the test fail, and restore the code. A temporary test or file for such a check is named `temporary...`, is never committed, and is deleted at the end of the step, together with the failure screenshots that its run saved.
 
 IMPL-10 Cover the unusual cases of each item: no rows, no columns, one row or column, empty and very long values, `null` and `undefined`, and the sizes in the scale goal in "Project-wide decisions" in `docs/progress/README.md`.
 

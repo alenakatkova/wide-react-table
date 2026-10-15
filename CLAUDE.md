@@ -15,3 +15,15 @@ A-05 The library's UI must meet WCAG 2.2 level AA. Each browser test that render
 A-06 When code turns off a check, a comment next to it says why. This applies to an axe rule, a lint rule, a type check, or a skipped test.
 
 A-07 Code, test names, comments, commit messages and pull request titles use only characters that are on a normal keyboard: `-` and not `−` or `–`, `x` and not `×`, `->` and not `→`, and straight quotes `"` `'` and not curly ones. Values, such as test data or text that the UI shows, can use any characters.
+
+# Working rules
+
+W-01 Name features and issues by their full id, such as `FEAT-010` or `ISSUE-15`, never by a short form such as "010" or a range such as "018 to 025". In rules and templates, the placeholders are `FEAT-xxx` and `ISSUE-xxx`.
+
+W-02 Run project tools only through the scripts in `package.json`, such as `pnpm lint` or `pnpm test:run`. Do not use `npx` or `pnpm exec`. A test script may get a file, for example `pnpm test:run src/test/seededRandom.test.ts`, to run only the tests of that file.
+
+W-03 Change and inspect files only with the Edit, Write and Read tools, never with `node` scripts or `node -e`. Edit and Write show each change.
+
+W-04 Each shell command does one thing. Do not add pipes, reads or checks to a command that writes, such as a commit, a push or `gh pr edit`, when its own output already shows the result.
+
+W-05 Product decisions are the user's: what the library supports, its public API, the README text, priorities, and dropping a feature. Ask with options and a recommendation, and do not decide them alone.
