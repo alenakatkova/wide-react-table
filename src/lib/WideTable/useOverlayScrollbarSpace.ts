@@ -1,5 +1,4 @@
 import { useLayoutEffect, useState, type RefObject } from 'react'
-import { measureScrollbarSizes, OVERLAY_SCROLLBAR_MAX_SIZE } from './measureScrollbarSizes'
 
 export interface OverlayScrollbarSpace {
   right: boolean
@@ -8,16 +7,30 @@ export interface OverlayScrollbarSpace {
 
 const NO_SPACE: OverlayScrollbarSpace = { right: false, bottom: false }
 
+function toPixels(value: string): number {
+  return parseFloat(value) || 0
+}
+
 function findOverlayScrollbarSides(container: HTMLElement): OverlayScrollbarSpace {
-  const { verticalScrollbarWidth, horizontalScrollbarHeight } = measureScrollbarSizes(container)
+  const { borderLeftWidth, borderRightWidth, borderTopWidth, borderBottomWidth } =
+    getComputedStyle(container)
+
+  // A classic scroll bar sits between the border and the padding, so it is the only other part
+  // of offsetWidth. An overlay scroll bar takes no space, so this is 0. Allow 1px for rounding.
+  const verticalScrollbarWidth =
+    container.offsetWidth -
+    container.clientWidth -
+    toPixels(borderLeftWidth) -
+    toPixels(borderRightWidth)
+  const horizontalScrollbarHeight =
+    container.offsetHeight -
+    container.clientHeight -
+    toPixels(borderTopWidth) -
+    toPixels(borderBottomWidth)
 
   return {
-    right:
-      container.scrollHeight > container.clientHeight &&
-      verticalScrollbarWidth <= OVERLAY_SCROLLBAR_MAX_SIZE,
-    bottom:
-      container.scrollWidth > container.clientWidth &&
-      horizontalScrollbarHeight <= OVERLAY_SCROLLBAR_MAX_SIZE,
+    right: container.scrollHeight > container.clientHeight && verticalScrollbarWidth <= 1,
+    bottom: container.scrollWidth > container.clientWidth && horizontalScrollbarHeight <= 1,
   }
 }
 

@@ -4,7 +4,7 @@
 
 - A browser test can read the real size of a rendered element, and it passes in Chromium and WebKit.
 - `pnpm test:browser` runs only `*.browser.test.ts` and `*.browser.test.tsx` files, and `pnpm test:run` runs none of them.
-- A browser test that chooses classic scroll bars sees a scroll bar that is wider than 0px on a container that scrolls.
+- A browser test that does not choose overlay scroll bars sees a scroll bar that is wider than 0px on a container that scrolls.
 - A browser test that chooses overlay scroll bars sees a scroll bar that is 0px wide on a container that scrolls.
 - The axe helper fails the test when the rendered UI has a WCAG 2.2 A or AA problem, for example a button with no label.
 - The axe helper passes when the rendered UI has no such problem.
@@ -33,9 +33,7 @@ PR 2: install `axe-core`.
 - [x] Split the Vitest config in `vite.config.ts` into the projects `unit` (jsdom, without `**/*.browser.test.{ts,tsx}`) and `browser` (browser mode with the Playwright provider, Chromium and WebKit, only `**/*.browser.test.{ts,tsx}`, a fixed page size of 1280 × 800).
 - [x] Scripts: `test` runs `vitest --project unit`, `test:run` runs `vitest run --project unit`, and the new `test:browser` runs `vitest run --project browser`.
 - [x] Split `src/test/setup.ts`: the `ResizeObserver` stub goes to a setup file for the `unit` project only. The jest-dom matchers and `cleanup` stay shared.
-- [x] Add the browser test types to `tsconfig.app.json`. Not needed: the browser tests import only `vitest` and Testing Library, which have their own types.
-- [x] Imitate classic scroll bars with `::-webkit-scrollbar` CSS in every browser test, from a setup file for the `browser` project. Add a helper that a test calls to get overlay scroll bars: it sets `scrollbar-width: none` for the duration of the test. Scroll bar sizes are measured with the same function that `WideTable` uses.
-- [x] Add `__screenshots__` and `.vitest-attachments` to `.gitignore`.
+- [x] Imitate classic scroll bars with `::-webkit-scrollbar` CSS in every browser test, from a setup file for the `browser` project. Add a helper that a test calls to get overlay scroll bars: it sets `scrollbar-width: none` for the duration of the test.- [x] Add `__screenshots__` and `.vitest-attachments` to `.gitignore`.
 - [x] Browser test: `FEAT-004: reads the real size of a rendered element`.
 - [x] Unit test `FEAT-004: unit tests run in jsdom` and browser test `FEAT-004: browser tests run in a real browser`.
 - [x] Browser tests: `FEAT-004: classic scroll bars take space`, `FEAT-004: overlay scroll bars take no space`, `FEAT-004: choosing overlay scroll bars twice adds one style` and `FEAT-004: overlay scroll bars end with their test`.
@@ -92,6 +90,8 @@ PR 2: install `axe-core`.
 ## Rejected approaches
 
 - A separate Playwright Test runner: Vitest browser mode keeps one test API for unit and browser tests.
+- Adding browser test types to `tsconfig.app.json` (a planned task in PR 1): not needed, because the browser tests import only `vitest` and Testing Library, which have their own types.
+- Measuring scroll bars in the browser tests with the library's own measurement: a bug in it could then hide a problem in the test setup. The tests measure on their own.
 - A separate Edge run: Edge uses the same engine as Chromium, and every machine that runs tests would need Edge installed.
 - CI in this feature: it is separate work.
 - A benchmark with no CPU slowdown, or with a 4x slowdown: 2x is closer to a normal laptop.

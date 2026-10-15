@@ -28,7 +28,8 @@ export default defineConfig({
             enabled: true,
             headless: true,
             // Playwright starts headless Chromium with this flag, which hides even the CSS-styled scroll bars.
-            // WebKit does not get it.
+            // The setting is for both browsers, but WebKit never gets this flag, so nothing changes there.
+            // A launch option for Chromium only must go on the Chromium instance instead.
             provider: playwright({ launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] } }),
             // Vitest's default page is 414px wide, so a wide table would make the page itself scroll
             viewport: { width: 1280, height: 800 },

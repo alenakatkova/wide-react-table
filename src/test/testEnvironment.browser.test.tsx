@@ -9,7 +9,8 @@ interface Row {
 
 describe('browser test environment', () => {
   it('FEAT-004: browser tests run in a real browser', () => {
-    expect(navigator.userAgent).not.toContain('jsdom')
+    // Chromium and WebKit both have "Safari" in their user agent. jsdom and Node do not.
+    expect(navigator.userAgent).toContain('Safari')
   })
 
   it('FEAT-004: reads the real size of a rendered element', () => {
