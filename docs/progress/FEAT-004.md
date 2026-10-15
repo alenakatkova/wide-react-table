@@ -22,7 +22,7 @@
 
 ## Next step
 
-PR 3: add a seeded random number function in `src/test/`.
+PR 4: add the Vitest project `bench` and the `bench` script.
 
 ## Tasks
 
@@ -49,9 +49,9 @@ PR 3: add a seeded random number function in `src/test/`.
 
 ### PR 3: Test data generator
 
-- [ ] Add a seeded random number function in `src/test/`.
-- [ ] Add the generator of columns and rows for `WideTable`. Each column has one type: text, number or date. Some cells are empty.
-- [ ] Unit tests: `FEAT-004: makes the requested columns and rows with text, numbers, dates and empty values`, `FEAT-004: same seed gives the same data` and `FEAT-004: different seed gives different data`.
+- [x] Add a seeded random number function in `src/test/`.
+- [x] Add the generator of columns and rows for `WideTable`. Each column has one type: text, number or date. Some cells are empty.
+- [x] Unit tests: `FEAT-004: makes the requested columns and rows with text, numbers, dates and empty values`, `FEAT-004: same seed gives the same data` and `FEAT-004: different seed gives different data`. Also `FEAT-004: gives all values of one column the same kind`, `FEAT-004: gives each row its own id`, `FEAT-004: makes no columns and no rows when asked for none` and `FEAT-004: makes one column and one row when asked for one`.
 
 ### PR 4: Benchmark
 
@@ -82,6 +82,8 @@ PR 3: add a seeded random number function in `src/test/`.
 - The tests of the helper check only whether a check passes or fails, where they can, not the text of its message, so a change of wording cannot break them.
 - The axe check covers only the element that is passed in. UI that a later feature draws in a portal, such as a menu in `document.body`, needs its own check. The first feature with a portal decides how.
 - This feature adds rule A-05 to CLAUDE.md: "The library's UI must meet WCAG 2.2 level AA. Each browser test that renders the library's UI runs an axe check, and any violation that axe reports fails the test. When a feature adds UI, its acceptance items say how that UI works with the keyboard."
+- The test data generator makes text, number and date columns in turn. About one cell in ten is empty, as `null`, because `WideTable` shows `null` as an empty cell. Dates are ISO date strings such as `2024-03-15`, not `Date` objects, because `WideTable` shows objects as JSON text. Column types come with FEAT-007. Text values include an empty string, a long text and non-ASCII letters.
+- Text and date cells pick their values from fixed lists, so they share the same strings. At the scale goal of 500 × 100,000 cells, a new string for each cell would use much more memory. The unit tests do not run the generator at full scale.
 - The benchmark runs on the developer's laptop, not in CI, because shared CI machines differ in speed from run to run.
 - A frame is dropped when it takes longer than about 16.7ms, which is one frame at 60 frames per second. The scroll goal is no more than 5% dropped frames.
 - The table has no virtual rendering yet, so the benchmark cannot run at full scale. The full-scale speed goals (500 × 100,000) become acceptance items of FEAT-005.
