@@ -13,3 +13,5 @@ A-04 Every GitHub issue and comment that Claude writes starts with the line "_Th
 A-05 The library's UI must meet WCAG 2.2 level AA. Each browser test that renders the library's UI runs an axe check, and any violation that axe reports fails the test. When a feature adds UI, its acceptance items say how that UI works with the keyboard.
 
 A-06 When code turns off a check, a comment next to it says why. This applies to an axe rule, a lint rule, a type check, or a skipped test.
+
+A-07 Code, test names, comments, commit messages and pull request titles use only characters that are on a normal keyboard: `-` and not `−` or `–`, `x` and not `×`, `->` and not `→`, and straight quotes `"` `'` and not curly ones. Values, such as test data or text that the UI shows, can use any characters.
