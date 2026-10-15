@@ -7,7 +7,7 @@ export function createSeededRandom(seed: number): () => number {
   // The algorithm keeps a 32-bit state. A larger or fractional seed would be cut to 32 bits and repeat
   // the numbers of another seed.
   if (!Number.isInteger(seed) || seed < 0 || seed > 2 ** 32 - 1) {
-    throw new RangeError(`The seed must be a whole number from 0 to 2^32 − 1, but it is ${seed}`)
+    throw new RangeError(`The seed must be a whole number from 0 to 2^32 - 1, but it is ${seed}`)
   }
   let state = seed
 
