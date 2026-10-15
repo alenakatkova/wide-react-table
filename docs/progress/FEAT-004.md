@@ -2,8 +2,8 @@
 
 ## Acceptance
 
-- A browser test can read the real size of a rendered element, and it passes in Chromium, Firefox and WebKit.
-- `pnpm test:browser` runs only `*.browser.test.tsx` files, and `pnpm test:run` runs no `*.browser.test.tsx` files.
+- A browser test can read the real size of a rendered element, and it passes in Chromium and WebKit.
+- `pnpm test:browser` runs only `*.browser.test.ts` and `*.browser.test.tsx` files, and `pnpm test:run` runs none of them.
 - A browser test that chooses classic scroll bars sees a scroll bar that is wider than 0px on a container that scrolls.
 - A browser test that chooses overlay scroll bars sees a scroll bar that is 0px wide on a container that scrolls.
 - The axe helper fails the test when the rendered UI has a WCAG 2.2 A or AA problem, for example a button with no label.
@@ -26,15 +26,15 @@ PR 2: install `axe-core`.
 
 ## Tasks
 
-### PR 1: Browser tests in Chromium, Firefox and WebKit
+### PR 1: Browser tests in Chromium and WebKit
 
 - [x] Install `@vitest/browser-playwright` and `playwright`.
-- [x] Add the `browsers:install` script, which runs `playwright install chromium firefox webkit`, and use it in the README "Development" section. Its name must not start with `test:`, because `/pr` runs every `test:` script.
-- [x] Split the Vitest config in `vite.config.ts` into the projects `unit` (jsdom, without `**/*.browser.test.{ts,tsx}`) and `browser` (browser mode with the Playwright provider, Chromium, Firefox and WebKit, only `**/*.browser.test.{ts,tsx}`, a fixed page size of 1280 × 800).
+- [x] Add the `browsers:install` script, which runs `playwright install chromium webkit`, and use it in the README "Development" section. Its name must not start with `test:`, because `/pr` runs every `test:` script.
+- [x] Split the Vitest config in `vite.config.ts` into the projects `unit` (jsdom, without `**/*.browser.test.{ts,tsx}`) and `browser` (browser mode with the Playwright provider, Chromium and WebKit, only `**/*.browser.test.{ts,tsx}`, a fixed page size of 1280 × 800).
 - [x] Scripts: `test` runs `vitest --project unit`, `test:run` runs `vitest run --project unit`, and the new `test:browser` runs `vitest run --project browser`.
 - [x] Split `src/test/setup.ts`: the `ResizeObserver` stub goes to a setup file for the `unit` project only. The jest-dom matchers and `cleanup` stay shared.
 - [x] Add the browser test types to `tsconfig.app.json`. Not needed: the browser tests import only `vitest` and Testing Library, which have their own types.
-- [x] Imitate classic scroll bars with `::-webkit-scrollbar` CSS in every browser test, from a setup file for the `browser` project. Add a helper that a test calls to get overlay scroll bars: it sets `scrollbar-width: none` for the duration of the test. In Firefox a test cannot choose the scroll bar mode, so both scroll bar mode tests are skipped there. Scroll bar sizes are measured with the same function that `WideTable` uses.
+- [x] Imitate classic scroll bars with `::-webkit-scrollbar` CSS in every browser test, from a setup file for the `browser` project. Add a helper that a test calls to get overlay scroll bars: it sets `scrollbar-width: none` for the duration of the test. Scroll bar sizes are measured with the same function that `WideTable` uses.
 - [x] Add `__screenshots__` and `.vitest-attachments` to `.gitignore`.
 - [x] Browser test: `FEAT-004: reads the real size of a rendered element`.
 - [x] Unit test `FEAT-004: unit tests run in jsdom` and browser test `FEAT-004: browser tests run in a real browser`.
@@ -68,9 +68,10 @@ PR 2: install `axe-core`.
 
 ## Notes
 
-- Browser tests use Vitest browser mode with the Playwright provider. Chromium also covers Edge, because Edge uses the same engine.
-- Browser test files sit next to the component and are named `*.browser.test.tsx`, or `*.browser.test.ts` without JSX.
-- Browser tests run on a page of 1280 × 800. Vitest's default page is 414px wide, so a wide table would make the page itself scroll, and its scroll bar would take space in Chromium and WebKit but not in Firefox.
+- Browser tests use Vitest browser mode with the Playwright provider, in Chromium and WebKit. Chromium also covers Edge, because Edge uses the same engine.
+- Firefox is not tested. Playwright's Firefox hides its scroll bars with a browser rule: `scrollbar-width` is `none` on every element, and even `scrollbar-width: auto !important` from the page does not change it. So a test cannot choose the scroll bar mode there, and layout tests with scroll bars would check a different case than in the other browsers. The README says "Tested in Chrome, Edge and Safari. Firefox is not tested."
+- Browser test files are named `*.browser.test.tsx`, or `*.browser.test.ts` without JSX. A test of a component sits next to the component. Tests of the test setup itself sit in `src/test/`.
+- Browser tests run on a page of 1280 × 800. Vitest's default page is 414px wide, so a wide table would make the page itself scroll.
 - Playwright starts headless Chromium with `--hide-scrollbars`, and that flag also hides the CSS-styled scroll bars. The config removes it. Checked on macOS: with the flag, the classic scroll bar test fails in Chromium.
 - axe runs only on small tables, for example 10 columns × 20 rows. On a full-scale table it is very slow and finds nothing new.
 - A test may turn off one axe rule only with a code comment that gives the reason. It never turns off all rules.
@@ -81,12 +82,12 @@ PR 2: install `axe-core`.
 - CI is not part of this feature. Add it later as its own feature with `/shape`. CI will run `pnpm test:browser`, but not `pnpm bench`.
 - Browser tests must pass headless on Linux, so that a later CI can run them.
 - Browser tests check sizes that come from the code, such as column widths, or compare sizes with each other. They never expect fixed text sizes, because fonts differ between macOS and Linux.
-- Scroll bar mode: on macOS, headless Chromium, Firefox and WebKit all use overlay scroll bars, and no launch setting changes that. So both modes are imitated with CSS. Every browser test has classic scroll bars from `::-webkit-scrollbar` styles with a fixed width, and a test imitates overlay scroll bars with `scrollbar-width: none`. This works the same on macOS and Linux in Chromium and WebKit. Playwright's Firefox hides its scroll bars with a browser rule: `scrollbar-width` is `none` on every element, and even `scrollbar-width: auto !important` from the page does not change it. So in Firefox, scroll bars always take no space, and both scroll bar mode tests are skipped: the overlay test would pass there even with a broken helper.
+- Scroll bar mode: on macOS, headless Chromium and WebKit use overlay scroll bars, and no launch setting changes that. So both modes are imitated with CSS. Every browser test has classic scroll bars from `::-webkit-scrollbar` styles with a fixed width, and a test imitates overlay scroll bars with `scrollbar-width: none`. This should work the same on macOS and Linux.
 - The benchmark is a Vitest project, so the 60-second limit, the error exit and new measurement files come with Vitest.
 
 ## Known problems
 
-- The browser tests have run only on macOS. On Linux, it is not checked yet that the imitated classic scroll bars work in headless Chromium and WebKit. It is also not checked that Playwright's Firefox hides its scroll bars on Linux the same way. The first CI run (FEAT-030) will show both.
+- The browser tests have run only on macOS. On Linux, it is not checked yet that the imitated classic scroll bars work in headless Chromium and WebKit. The first CI run (FEAT-030) will show it.
 
 ## Rejected approaches
 
@@ -97,6 +98,7 @@ PR 2: install `axe-core`.
 - One browser instance per scroll bar mode, for example a second Chromium without `--hide-scrollbars`: it makes test runs longer, and the result depends more on the system.
 - Real classic scroll bars from launch settings (Chromium without `--hide-scrollbars`, Firefox with `ui.useOverlayScrollbars: 0`): tried, and on macOS all browsers still had scroll bars 0px wide. Chromium and WebKit follow the system setting "Show scroll bars", and Playwright's Firefox hides its scroll bars.
 - Showing Firefox scroll bars with `scrollbar-width: auto !important` together with `ui.useOverlayScrollbars: 0`: tried, and `scrollbar-width` stayed `none`.
+- Running Firefox with the scroll bar mode tests skipped: Firefox would take a different path through `WideTable` (overlay scroll bar space) than the other browsers, so every later layout test would need a Firefox case. Firefox was removed from the browser tests instead.
 - Changing the macOS setting "Show scroll bars" for each test browser with `defaults write`: every developer would have to do it by hand, and it may not work for headless Chromium.
 - Real classic scroll bars only on Linux, with the classic tests skipped on macOS: classic scroll bars would be checked only in a CI that does not exist yet.
 - A separate Node script that starts Chromium with Playwright for the benchmark: the time limit, the error exit and finding new measurement files would need to be written by hand.

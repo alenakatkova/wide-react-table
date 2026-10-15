@@ -13,7 +13,7 @@
     "test": "vitest --project unit",
     "test:run": "vitest run --project unit",
     "test:browser": "vitest run --project browser",
-    "browsers:install": "playwright install chromium firefox webkit"
+    "browsers:install": "playwright install chromium webkit"
   },
   "dependencies": {
     "react": "^19.2.8",

@@ -4,11 +4,7 @@ import {
   measureScrollbarSizes,
   OVERLAY_SCROLLBAR_MAX_SIZE,
 } from '../lib/WideTable/useOverlayScrollbarSpace'
-import {
-  canChooseScrollbarMode,
-  imitateOverlayScrollbars,
-  overlayScrollbarStyleId,
-} from './scrollbars'
+import { imitateOverlayScrollbars, overlayScrollbarStyleId } from './scrollbars'
 
 function renderScrollingContainer() {
   render(
@@ -23,7 +19,7 @@ function renderScrollingContainer() {
 }
 
 describe('scroll bars in browser tests', () => {
-  it.skipIf(!canChooseScrollbarMode())('FEAT-004: overlay scroll bars take no space', () => {
+  it('FEAT-004: overlay scroll bars take no space', () => {
     imitateOverlayScrollbars()
     const container = renderScrollingContainer()
 
@@ -32,7 +28,7 @@ describe('scroll bars in browser tests', () => {
     )
   })
 
-  it.skipIf(!canChooseScrollbarMode())('FEAT-004: classic scroll bars take space', () => {
+  it('FEAT-004: classic scroll bars take space', () => {
     const container = renderScrollingContainer()
 
     expect(measureScrollbarSizes(container).verticalScrollbarWidth).toBeGreaterThan(
