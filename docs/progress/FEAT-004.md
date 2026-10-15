@@ -22,7 +22,7 @@
 
 ## Next step
 
-PR 3: add a seeded random number function in `src/test/`.
+PR 4: add the Vitest project `bench` and the `bench` script.
 
 ## Tasks
 
@@ -49,9 +49,9 @@ PR 3: add a seeded random number function in `src/test/`.
 
 ### PR 3: Test data generator
 
-- [ ] Add a seeded random number function in `src/test/`.
-- [ ] Add the generator of columns and rows for `WideTable`. Each column has one type: text, number or date. Some cells are empty.
-- [ ] Unit tests: `FEAT-004: makes the requested columns and rows with text, numbers, dates and empty values`, `FEAT-004: same seed gives the same data` and `FEAT-004: different seed gives different data`.
+- [x] Add a seeded random number function in `src/test/`.
+- [x] Add the generator of columns and rows for `WideTable`. Each column has one type: text, number or date. Some cells are empty.
+- [x] Unit tests: `FEAT-004: makes the requested columns and rows with text, numbers, dates and empty values`, `FEAT-004: same seed gives the same data` and `FEAT-004: different seed gives different data`. Also `FEAT-004: gives all values of one column the same kind`, `FEAT-004: makes two of every three columns number columns`, `FEAT-004: gives every number a fractional part`, `FEAT-004: puts empty strings into text columns`, `FEAT-004: gives each row its own id`, `FEAT-004: makes no columns and no rows when asked for none`, `FEAT-004: makes one column and one row when asked for one`, `FEAT-004: rejects a column or row count that is not a whole number of 0 or more`, `FEAT-004: seeded random numbers are from 0 up to, but not including, 1` and `FEAT-004: rejects a seed that is not a whole number from 0 to 2^32 - 1`.
 
 ### PR 4: Benchmark
 
@@ -82,6 +82,9 @@ PR 3: add a seeded random number function in `src/test/`.
 - The tests of the helper check only whether a check passes or fails, where they can, not the text of its message, so a change of wording cannot break them.
 - The axe check covers only the element that is passed in. UI that a later feature draws in a portal, such as a menu in `document.body`, needs its own check. The first feature with a portal decides how.
 - This feature adds rule A-05 to CLAUDE.md: "The library's UI must meet WCAG 2.2 level AA. Each browser test that renders the library's UI runs an axe check, and any violation that axe reports fails the test. When a feature adds UI, its acceptance items say how that UI works with the keyboard."
+- The test data generator makes two of every three columns number columns, like the data this table is made for. The others are text and date columns. So the benchmark measures this mix, not the case where every cell is a decimal number. About one cell in ten is empty, as `null`, because `WideTable` shows `null` as an empty cell. Text columns also have empty strings, so about one text cell in five looks empty. Numbers always have decimals on purpose, from -9,999.99 to 9,999.99, like real data, so the benchmark measures their memory cost: Chrome stores a decimal number as a separate object in memory, but a small whole number inside the row object. Dates are ISO date strings such as `2024-03-15`, not `Date` objects, because `WideTable` shows objects as JSON text. Column types come with FEAT-007. Text values include an empty string, a long text and non-ASCII letters.
+- Text and date cells pick their values from fixed lists. But each row goes through `JSON.parse`, and Chrome's `JSON.parse` shares only short strings, about 10 characters or fewer (not measured here). So dates and short texts are shared, and longer texts, such as the long text and the non-ASCII text, are a new string in every cell. Real rows from a server have the same cost, so the benchmark measures it. The unit tests do not run the generator at full scale.
+- Each generated row goes through `JSON.parse`, like rows from a server. Measured in Node: rows that get their properties added one by one become hash tables from about 20 properties, but rows from `JSON.parse` stay in a fast, small form up to about 127 properties. So without this step, the benchmark with 50 columns would measure slower rows than real ones.
 - The benchmark runs on the developer's laptop, not in CI, because shared CI machines differ in speed from run to run.
 - A frame is dropped when it takes longer than about 16.7ms, which is one frame at 60 frames per second. The scroll goal is no more than 5% dropped frames.
 - The table has no virtual rendering yet, so the benchmark cannot run at full scale. The full-scale speed goals (500 × 100,000) become acceptance items of FEAT-005.
@@ -104,6 +107,7 @@ PR 3: add a seeded random number function in `src/test/`.
 - A guard in the helper that fails with a clear message when the element is no longer on the page: axe already fails in that case, so the guard would only change the message, and no test could show the difference without reading the message.
 - A code comment instead of the axe queue: the queue lets checks overlap safely, for example in `it.concurrent`, without a rule for the caller to remember.
 - Adding browser test types to `tsconfig.app.json` (a planned task in PR 1): not needed, because the browser tests import only `vitest` and Testing Library, which have their own types.
+- Whole numbers instead of decimals in the generated data, to use less memory: real data often has decimals, so the benchmark would show a better result than real use.
 - Moving the axe check of `WideTable` out of `FEAT-004: reads the real size of a rendered element` into its own test: the size test would then render `WideTable` without an axe check, which breaks rule A-05.
 - Measuring scroll bars in the browser tests with the library's own measurement: a bug in it could then hide a problem in the test setup. The tests measure on their own.
 - A separate Edge run: Edge uses the same engine as Chromium, and every machine that runs tests would need Edge installed.
