@@ -37,7 +37,15 @@ describe('test data generator', () => {
       .flatMap((row) => columns.map((column) => row[column.key]))
       .filter((value) => typeof value === 'number')
     expect(numbers.length).toBeGreaterThan(0)
-    expect(numbers.filter((value) => Number.isInteger(value) || Object.is(value, -0))).toEqual([])
+    // `Number.isInteger(-0)` is also true, so this also finds -0
+    expect(numbers.filter((value) => Number.isInteger(value))).toEqual([])
+  })
+
+  it('FEAT-004: puts empty strings into text columns', () => {
+    const { columns, rows } = generateTableData({ columnCount: 6, rowCount: 200, seed: 1 })
+
+    const cells = rows.flatMap((row) => columns.map((column) => row[column.key]))
+    expect(cells).toContain('')
   })
 
   it('FEAT-004: gives each row its own id', () => {

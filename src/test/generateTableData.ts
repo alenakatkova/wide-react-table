@@ -53,6 +53,12 @@ function createDecimalNumber(random: () => number) {
   return (wholePart * 100 + hundredths) / 100
 }
 
+function assertWholeCount(name: string, count: number) {
+  if (!Number.isInteger(count) || count < 0) {
+    throw new RangeError(`${name} must be a whole number of 0 or more, but it is ${count}`)
+  }
+}
+
 /**
  * Makes columns and rows for `WideTable` tests and the benchmark. Columns take turns being text,
  * number and date columns, and about one cell in ten is `null`. Text columns also have empty
@@ -63,14 +69,8 @@ export function generateTableData(options: {
   rowCount: number
   seed: number
 }): { columns: WideTableColumn<GeneratedRow>[]; rows: GeneratedRow[] } {
-  for (const [name, count] of [
-    ['columnCount', options.columnCount],
-    ['rowCount', options.rowCount],
-  ] as const) {
-    if (!Number.isInteger(count) || count < 0) {
-      throw new RangeError(`${name} must be a whole number of 0 or more, but it is ${count}`)
-    }
-  }
+  assertWholeCount('columnCount', options.columnCount)
+  assertWholeCount('rowCount', options.rowCount)
 
   const random = createSeededRandom(options.seed)
   const columnDefinitions = Array.from({ length: options.columnCount }, (_, columnIndex) => {
