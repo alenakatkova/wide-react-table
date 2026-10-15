@@ -3,10 +3,18 @@ import { generateTableData, type GeneratedCellValue } from './generateTableData'
 
 const isoDatePattern = /^\d{4}-\d{2}-\d{2}$/
 
-// No test changes this data, so the tests can share it
-const sampleData = generateTableData({ columnCount: 6, rowCount: 1_000, seed: 1 })
+type TableData = ReturnType<typeof generateTableData>
 
-function allCells({ columns, rows }: typeof sampleData) {
+// No test changes this data, so the tests can share it. It is made on first use inside a test,
+// so that an error while making it fails a named test, not the loading of the whole file.
+let sharedSampleData: TableData | undefined
+
+function getSampleData() {
+  sharedSampleData ??= generateTableData({ columnCount: 6, rowCount: 1_000, seed: 1 })
+  return sharedSampleData
+}
+
+function allCells({ columns, rows }: TableData) {
   return rows.flatMap((row) => columns.map((column) => row[column.key]))
 }
 
@@ -18,6 +26,8 @@ function cellKind(value: GeneratedCellValue) {
 
 describe('test data generator', () => {
   it('FEAT-004: makes the requested columns and rows with text, numbers, dates and empty values', () => {
+    const sampleData = getSampleData()
+
     expect(sampleData.columns).toHaveLength(6)
     expect(sampleData.rows).toHaveLength(1_000)
     const kinds = new Set(allCells(sampleData).map(cellKind))
@@ -25,7 +35,7 @@ describe('test data generator', () => {
   })
 
   it('FEAT-004: gives all values of one column the same kind', () => {
-    const { columns, rows } = sampleData
+    const { columns, rows } = getSampleData()
 
     for (const column of columns) {
       const kinds = new Set(
@@ -36,7 +46,7 @@ describe('test data generator', () => {
   })
 
   it('FEAT-004: makes two of every three columns number columns', () => {
-    const { columns, rows } = sampleData
+    const { columns, rows } = getSampleData()
 
     const numberColumns = columns.filter((column) =>
       rows.some((row) => typeof row[column.key] === 'number'),
@@ -45,18 +55,18 @@ describe('test data generator', () => {
   })
 
   it('FEAT-004: gives every number a fractional part', () => {
-    const numbers = allCells(sampleData).filter((value) => typeof value === 'number')
+    const numbers = allCells(getSampleData()).filter((value) => typeof value === 'number')
     expect(numbers.length).toBeGreaterThan(0)
     // `Number.isInteger(-0)` is also true, so this also finds -0
     expect(numbers.filter((value) => Number.isInteger(value))).toEqual([])
   })
 
   it('FEAT-004: puts empty strings into text columns', () => {
-    expect(allCells(sampleData)).toContain('')
+    expect(allCells(getSampleData())).toContain('')
   })
 
   it('FEAT-004: gives each row its own id', () => {
-    const { rows } = sampleData
+    const { rows } = getSampleData()
 
     expect(new Set(rows.map((row) => row.id)).size).toBe(rows.length)
   })
