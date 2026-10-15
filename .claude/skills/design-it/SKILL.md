@@ -22,7 +22,7 @@ Then switch to the plan branch, or create it, as in GRILL-02 in `.claude/skills/
 
 DESIGN-02 Read the progress file `docs/progress/FEAT-xxx.md` or `docs/progress/ISSUE-xxx.md`. Also read `docs/progress/README.md`. If a plan exists and "Next step" does not start with "Plan again", say so and stop.
 
-DESIGN-03 Launch a subagent to find the code and the existing tests that the work touches, and read them. Follow a design chosen with `/design-it-twice` under "Notes".
+DESIGN-03 Launch a subagent to find the code and the existing tests that the work touches, and read them. If "Notes" has a design that was chosen with `/design-it-twice`, follow it.
 
 ## Plan
 
@@ -36,7 +36,7 @@ DESIGN-07 Change the plan until the user approves it.
 
 ## Result
 
-DESIGN-08 After approval, write the pull requests and their tasks to the progress file, as in the template in `docs/progress/README.md`, and the first task under "Next step", without a "Plan again" note. Write a design chosen in DESIGN-06 under "Notes", and the other design under "Rejected approaches" with the reason.
+DESIGN-08 After approval, write the pull requests and their tasks to the progress file, as in the template in `docs/progress/README.md`, and the first task under "Next step", without a "Plan again" note. If a design was chosen in DESIGN-06, write it under "Notes", and the other design under "Rejected approaches" with the reason.
 
 DESIGN-09 Do not write code and do not change the status. Commit the changes on the branch with the message `docs: plan FEAT-xxx` or `docs: plan ISSUE-xxx`.
 
