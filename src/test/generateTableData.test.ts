@@ -35,6 +35,15 @@ describe('test data generator', () => {
     }
   })
 
+  it('FEAT-004: makes two of every three columns number columns', () => {
+    const { columns, rows } = sampleData
+
+    const numberColumns = columns.filter((column) =>
+      rows.some((row) => typeof row[column.key] === 'number'),
+    )
+    expect(numberColumns).toHaveLength(4)
+  })
+
   it('FEAT-004: gives every number a fractional part', () => {
     const numbers = allCells(sampleData).filter((value) => typeof value === 'number')
     expect(numbers.length).toBeGreaterThan(0)

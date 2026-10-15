@@ -10,7 +10,8 @@ export interface GeneratedRow {
 
 type ColumnKind = 'text' | 'number' | 'date'
 
-const columnKinds: ColumnKind[] = ['text', 'number', 'date']
+// Two of every three columns are numbers, like the data this table is made for
+const columnKinds: ColumnKind[] = ['text', 'number', 'number', 'date', 'number', 'number']
 const emptyCellShare = 0.1
 
 // Text and dates come from fixed lists, so cells share strings and use less memory
@@ -60,8 +61,8 @@ function assertWholeCount(name: string, count: number) {
 }
 
 /**
- * Makes columns and rows for `WideTable` tests and the benchmark. Columns take turns being text,
- * number and date columns, and about one cell in ten is `null`. Text columns also have empty
+ * Makes columns and rows for `WideTable` tests and the benchmark. Two of every three columns are
+ * number columns, the others are text and date columns, and about one cell in ten is `null`. Text columns also have empty
  * strings, so about one text cell in five looks empty. The same seed always gives the same data.
  */
 export function generateTableData(options: {
@@ -83,7 +84,9 @@ export function generateTableData(options: {
     for (const column of columnDefinitions) {
       row[column.key] = createCellValue(column.kind, random)
     }
-    return row
+    // Real rows come from a server through `JSON.parse`, and Chrome stores those in a faster form
+    // than rows that get their properties added one by one. The benchmark must measure real rows.
+    return JSON.parse(JSON.stringify(row)) as GeneratedRow
   })
 
   const columns = columnDefinitions.map(({ key, title }) => ({ key, title }))
