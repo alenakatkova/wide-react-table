@@ -44,7 +44,8 @@ PR 3: add a seeded random number function in `src/test/`.
 - [x] Install `axe-core`.
 - [x] Add the helper `expectNoAccessibilityViolations(element, { disabledRule? })`. It checks the WCAG 2.0, 2.1 and 2.2 A and AA tags, and lists each violation in the failure message.
 - [x] Add rule A-05 to CLAUDE.md. It covers browser tests that render the library's UI, so the setup tests with plain elements need no axe check. The setup test that renders `WideTable` runs one.
-- [x] Browser tests: `FEAT-004: axe check fails for a button with no label`, `FEAT-004: axe check passes for UI with no problems` and `FEAT-004: axe check skips the turned-off rule and still finds other problems`.
+- [x] Browser tests: `FEAT-004: axe check fails for a button with no label`, `FEAT-004: axe check passes for UI with no problems`, `FEAT-004: axe check skips the turned-off rule and still finds other problems` and `FEAT-004: two axe checks started at the same time both give their own result`.
+- [x] Add rule A-06 to CLAUDE.md: when code turns off a check, a comment next to it says why.
 
 ### PR 3: Test data generator
 
@@ -73,7 +74,10 @@ PR 3: add a seeded random number function in `src/test/`.
 - Browser tests run on a page of 1280 × 800. Vitest's default page is 414px wide, so a wide table would make the page itself scroll.
 - Playwright starts headless Chromium with `--hide-scrollbars`, and that flag also hides the CSS-styled scroll bars. The config removes it on the Chromium instance only, so each browser has its own launch options. Checked on macOS: with the flag, the classic scroll bar test fails in Chromium, and WebKit passes without the setting.
 - axe runs only on small tables, for example 10 columns × 20 rows. On a full-scale table it is very slow and finds nothing new.
-- A test may turn off one axe rule only with a code comment that gives the reason. It never turns off all rules.
+- A test may turn off one axe rule only with a code comment that gives the reason (rule A-06). It never turns off all rules.
+- The axe check fails only on violations. Cases that axe cannot decide (`incomplete`, most often color contrast over a background that axe cannot see) are ignored on purpose, because many of them are fine.
+- axe cannot run two checks at the same time on one page, so the helper queues its checks. A missing `await` or `it.concurrent` does not break it.
+- The axe check covers only the element that is passed in. UI that a later feature draws in a portal, such as a menu in `document.body`, needs its own check. The first feature with a portal decides how.
 - This feature adds rule A-05 to CLAUDE.md: "The library's UI must meet WCAG 2.2 level AA. Each browser test that renders the library's UI runs an axe check, and any problem that axe finds fails the test. When a feature adds UI, its acceptance items say how that UI works with the keyboard."
 - The benchmark runs on the developer's laptop, not in CI, because shared CI machines differ in speed from run to run.
 - A frame is dropped when it takes longer than about 16.7ms, which is one frame at 60 frames per second. The scroll goal is no more than 5% dropped frames.
@@ -93,7 +97,10 @@ PR 3: add a seeded random number function in `src/test/`.
 ## Rejected approaches
 
 - A separate Playwright Test runner: Vitest browser mode keeps one test API for unit and browser tests.
+- Failing the axe check on `incomplete` results: it would fail tests for cases that are often fine, and the user expects to be the main user of the library.
+- A code comment instead of the axe queue ("always `await` the check"): the queue protects every caller, and the caller has nothing to remember.
 - Adding browser test types to `tsconfig.app.json` (a planned task in PR 1): not needed, because the browser tests import only `vitest` and Testing Library, which have their own types.
+- Moving the axe check of `WideTable` out of `FEAT-004: reads the real size of a rendered element` into its own test: the size test would then render `WideTable` without an axe check, which breaks rule A-05.
 - Measuring scroll bars in the browser tests with the library's own measurement: a bug in it could then hide a problem in the test setup. The tests measure on their own.
 - A separate Edge run: Edge uses the same engine as Chromium, and every machine that runs tests would need Edge installed.
 - CI in this feature: it is separate work.

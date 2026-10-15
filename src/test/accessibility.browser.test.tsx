@@ -23,9 +23,22 @@ describe('accessibility check in browser tests', () => {
       </>,
     )
 
+    // `button-name` is turned off to check that the helper skips exactly that rule
     const check = expectNoAccessibilityViolations(container, { disabledRule: 'button-name' })
 
     await expect(check).rejects.toThrow('image-alt')
     await expect(check).rejects.not.toThrow('button-name')
+  })
+
+  it('FEAT-004: two axe checks started at the same time both give their own result', async () => {
+    // An image, not a second button: two small buttons close together break the `target-size` rule
+    const { container: containerWithProblem } = render(<img src="data:," />)
+    const { container: containerWithoutProblem } = render(<button type="button">Save</button>)
+
+    const checkWithProblem = expectNoAccessibilityViolations(containerWithProblem)
+    const checkWithoutProblem = expectNoAccessibilityViolations(containerWithoutProblem)
+
+    await expect(checkWithProblem).rejects.toThrow('image-alt')
+    await expect(checkWithoutProblem).resolves.toBeUndefined()
   })
 })
