@@ -15,6 +15,7 @@ Decisions that apply to more than one feature.
 - **Scale:** 500 columns x 100,000 rows. Initial render under 500ms, scrolling at about 60 frames per second on a normal laptop, search and filter results under 200ms.
 - **Versioning:** 0.x versions until all core features are done. Breaking changes are allowed in 0.x. Then 1.0 with semantic versioning.
 - **Accessibility:** the library's UI must meet WCAG 2.2 level AA. axe checks it in browser tests. Keyboard use is part of the acceptance items of each feature that adds UI.
+- **Browsers:** tested in Chromium (Chrome, Edge) and WebKit (Safari). Firefox is not tested, because Playwright's Firefox hides scroll bars in a way that page CSS cannot change. The README says "Tested in Chromium and WebKit, the engines of Chrome, Edge and Safari. Firefox is not tested."
 
 ## Feature file template
 

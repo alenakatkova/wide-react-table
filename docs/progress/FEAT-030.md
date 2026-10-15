@@ -4,7 +4,7 @@
 
 - GitHub Actions on the standard Linux runners, which are free for a public repository.
 - It runs on every pull request and on every push to `main`.
-- It runs lint, the format check, the build, unit tests, and browser tests in Chromium, Firefox and WebKit.
+- It runs lint, the format check, the build, unit tests, and browser tests in Chromium and WebKit.
 - The benchmark does not run in CI, because shared CI machines differ in speed from run to run.
 - The browsers and their Linux system libraries are downloaded on every run, which takes about 1–2 minutes. A cache saves little time.
 - Branch protection on `main`: GitHub blocks a merge when CI fails.

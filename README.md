@@ -10,9 +10,13 @@ The library ships its own UI, such as menus, popups and panels, with CSS that ap
 
 Work in progress. All features, with their priority and status, are listed in [docs/features.json](docs/features.json).
 
+## Browsers
+
+Tested in Chromium and WebKit, the engines of Chrome, Edge and Safari. Firefox is not tested.
+
 ## Tech stack
 
-React, TypeScript, Vite, Vitest, React Testing Library, ESLint and Prettier.
+React, TypeScript, Vite, Vitest (with browser mode and Playwright), React Testing Library, ESLint and Prettier.
 
 ## Project structure
 
@@ -49,10 +53,22 @@ Check formatting:
 pnpm format:check
 ```
 
-Run tests:
+Run unit tests:
 
 ```bash
 pnpm test:run
+```
+
+Install the browsers for browser tests (Chromium and WebKit), once and after each Playwright update:
+
+```bash
+pnpm browsers:install
+```
+
+Run browser tests:
+
+```bash
+pnpm test:browser
 ```
 
 Create a production build:
