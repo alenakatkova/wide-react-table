@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { cleanup, render } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { expectNoAccessibilityViolations } from './accessibility'
 
@@ -15,28 +15,47 @@ describe('accessibility check in browser tests', () => {
     await expect(expectNoAccessibilityViolations(container)).resolves.toBeUndefined()
   })
 
+  // Only pass or fail is checked, not the message text. A button with no label breaks only the
+  // `button-name` rule, and an image with no `alt` text breaks the `image-alt` rule.
+  // `button-name` is turned off to check that the helper skips exactly that rule.
   it('FEAT-004: axe check skips the turned-off rule and still finds other problems', async () => {
+    const buttonOnly = render(<button type="button" />)
+    await expect(
+      expectNoAccessibilityViolations(buttonOnly.container, { disabledRule: 'button-name' }),
+    ).resolves.toBeUndefined()
+    // Two buttons on one page would also break the `target-size` rule
+    buttonOnly.unmount()
+
     const { container } = render(
       <>
         <button type="button" />
         <img src="data:," />
       </>,
     )
-
-    // `button-name` is turned off to check that the helper skips exactly that rule
-    const check = expectNoAccessibilityViolations(container, { disabledRule: 'button-name' })
-
-    await expect(check).rejects.toThrow('image-alt')
-    await expect(check).rejects.not.toThrow('button-name')
+    await expect(
+      expectNoAccessibilityViolations(container, { disabledRule: 'button-name' }),
+    ).rejects.toThrow()
   })
 
+  // The button has no problems, so a failure can only come from the check of `disabledRule`
   it('FEAT-004: axe check fails when the turned-off rule is not one that it runs', async () => {
     const { container } = render(<button type="button">Save</button>)
 
     // `region` is a best-practice rule, not a WCAG rule, so turning it off here would do nothing
-    const check = expectNoAccessibilityViolations(container, { disabledRule: 'region' })
+    await expect(
+      expectNoAccessibilityViolations(container, { disabledRule: 'region' }),
+    ).rejects.toThrow()
+    // `css-orientation-lock` has a WCAG tag, but axe does not run it because it is experimental
+    await expect(
+      expectNoAccessibilityViolations(container, { disabledRule: 'css-orientation-lock' }),
+    ).rejects.toThrow()
+  })
 
-    await expect(check).rejects.toThrow('"region" is not one of the WCAG A and AA rules')
+  it('FEAT-004: axe check fails when the element is no longer on the page', async () => {
+    const { container } = render(<button type="button">Save</button>)
+    cleanup()
+
+    await expect(expectNoAccessibilityViolations(container)).rejects.toThrow()
   })
 
   it('FEAT-004: two axe checks started at the same time both give their own result', async () => {

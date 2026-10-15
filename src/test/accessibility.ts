@@ -11,9 +11,16 @@ function describeViolation(violation: axe.Result) {
   return `${violation.id} (${violation.impact ?? 'unknown impact'}): ${violation.help}. Elements: ${elements}`
 }
 
+// A run by tag skips experimental and deprecated rules, although `getRules` returns them
+function getCheckedRuleIds() {
+  return axe
+    .getRules(wcagLevelAAndAATags)
+    .filter((rule) => !rule.tags.includes('experimental') && !rule.tags.includes('deprecated'))
+    .map((rule) => rule.ruleId)
+}
+
 async function runAccessibilityCheck(element: Element, disabledRule: string | undefined) {
-  const checkedRuleIds = axe.getRules(wcagLevelAAndAATags).map((rule) => rule.ruleId)
-  if (disabledRule && !checkedRuleIds.includes(disabledRule)) {
+  if (disabledRule && !getCheckedRuleIds().includes(disabledRule)) {
     throw new Error(
       `"${disabledRule}" is not one of the WCAG A and AA rules that this check runs, so turning it off does nothing`,
     )
