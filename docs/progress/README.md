@@ -14,6 +14,7 @@ Decisions that apply to more than one feature.
 - **UI:** the library ships its own UI, such as menus, popups and panels, with CSS that apps can override. It is not headless.
 - **Scale:** 500 columns x 100,000 rows. Initial render under 500ms, scrolling at about 60 frames per second on a normal laptop, search and filter results under 200ms.
 - **Versioning:** 0.x versions until all core features are done. Breaking changes are allowed in 0.x. Then 1.0 with semantic versioning.
+- **Accessibility:** the library's UI must meet WCAG 2.2 level AA. axe checks it in browser tests. Keyboard use is part of the acceptance items of each feature that adds UI.
 
 ## Feature file template
 
