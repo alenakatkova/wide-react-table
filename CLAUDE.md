@@ -18,7 +18,7 @@ A-06 When code turns off a check, a comment next to it says why. This applies to
 
 W-01 Name features and issues by their full id, such as `FEAT-010` or `ISSUE-15`, never by a short form such as "010" or a range such as "018 to 025". In rules and templates, the placeholders are `FEAT-xxx` and `ISSUE-xxx`.
 
-W-02 Run project tools only through the scripts in `package.json`, such as `pnpm lint` or `pnpm test:run`, as they are. Do not use `npx`, `pnpm exec`, or a script with extra file arguments when a script already covers the check.
+W-02 Run project tools only through the scripts in `package.json`, such as `pnpm lint` or `pnpm test:run`. Do not use `npx` or `pnpm exec`. A test script may get a file, for example `pnpm test:run src/test/seededRandom.test.ts`, to run only the tests of that file.
 
 W-03 Change and inspect files only with the Edit, Write and Read tools, never with `node` scripts or `node -e`. Edit and Write show each change.
 
