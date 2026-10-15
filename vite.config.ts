@@ -27,18 +27,9 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            provider: playwright(),
-            instances: [
-              {
-                browser: 'chromium',
-                // Playwright starts headless Chromium with this flag, which hides scroll bars
-                provider: playwright({
-                  launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] },
-                }),
-              },
-              { browser: 'firefox' },
-              { browser: 'webkit' },
-            ],
+            // Playwright starts headless Chromium with this flag, which hides scroll bars. Firefox and WebKit do not get it.
+            provider: playwright({ launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] } }),
+            instances: [{ browser: 'chromium' }, { browser: 'firefox' }, { browser: 'webkit' }],
           },
         },
       },

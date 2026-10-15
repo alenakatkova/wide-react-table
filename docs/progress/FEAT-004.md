@@ -38,7 +38,7 @@ PR 2: install `axe-core`.
 - [x] Add `__screenshots__` and `.vitest-attachments` to `.gitignore`.
 - [x] Browser test: `FEAT-004: reads the real size of a rendered element`.
 - [x] Unit test `FEAT-004: unit tests run in jsdom` and browser test `FEAT-004: browser tests run in a real browser`.
-- [x] Browser tests: `FEAT-004: classic scroll bars take space` and `FEAT-004: overlay scroll bars take no space`.
+- [x] Browser tests: `FEAT-004: classic scroll bars take space`, `FEAT-004: overlay scroll bars take no space` and `FEAT-004: overlay scroll bars end with their test`.
 
 ### PR 2: axe accessibility check
 
@@ -79,12 +79,12 @@ PR 2: install `axe-core`.
 - CI is not part of this feature. Add it later as its own feature with `/shape`. CI will run `pnpm test:browser`, but not `pnpm bench`.
 - Browser tests must pass headless on Linux, so that a later CI can run them.
 - Browser tests check sizes that come from the code, such as column widths, or compare sizes with each other. They never expect fixed text sizes, because fonts differ between macOS and Linux.
-- Scroll bar mode: on macOS, headless Chromium, Firefox and WebKit all use overlay scroll bars, and no launch setting changes that. So both modes are imitated with CSS. Every browser test has classic scroll bars from `::-webkit-scrollbar` styles with a fixed width, and a test imitates overlay scroll bars with `scrollbar-width: none`. This works the same on macOS and Linux. Firefox has no CSS that makes scroll bars take space, so in Firefox the classic scroll bar test is skipped, and its tests always see scroll bars that take no space.
+- Scroll bar mode: on macOS, headless Chromium, Firefox and WebKit all use overlay scroll bars, and no launch setting changes that. So both modes are imitated with CSS. Every browser test has classic scroll bars from `::-webkit-scrollbar` styles with a fixed width, and a test imitates overlay scroll bars with `scrollbar-width: none`. This works the same on macOS and Linux in Chromium and WebKit. Playwright's Firefox hides its scroll bars with a browser rule: `scrollbar-width` is `none` on every element, and even `scrollbar-width: auto !important` from the page does not change it. So in Firefox, scroll bars always take no space, and the classic scroll bar test is skipped.
 - The benchmark is a Vitest project, so the 60-second limit, the error exit and new measurement files come with Vitest.
 
 ## Known problems
 
-- The browser tests have run only on macOS. On Linux, it is not checked yet that the imitated classic scroll bars work in headless Chromium. The config removes `--hide-scrollbars` for Chromium in case that flag also hides styled scroll bars. The first CI run (FEAT-030) will show it.
+- The browser tests have run only on macOS. On Linux, it is not checked yet that the imitated classic scroll bars work in headless Chromium. The config removes `--hide-scrollbars` for Chromium in case that flag also hides styled scroll bars. It is also not checked that Playwright's Firefox hides its scroll bars on Linux the same way. The first CI run (FEAT-030) will show both.
 
 ## Rejected approaches
 
@@ -93,7 +93,8 @@ PR 2: install `axe-core`.
 - CI in this feature: it is separate work.
 - A benchmark with no CPU slowdown, or with a 4x slowdown: 2x is closer to a normal laptop.
 - One browser instance per scroll bar mode, for example a second Chromium without `--hide-scrollbars`: it makes test runs longer, and the result depends more on the system.
-- Real classic scroll bars from launch settings (Chromium without `--hide-scrollbars`, Firefox with `ui.useOverlayScrollbars: 0`): tried, and on macOS all browsers still had scroll bars 0px wide, because they follow the system setting "Show scroll bars".
+- Real classic scroll bars from launch settings (Chromium without `--hide-scrollbars`, Firefox with `ui.useOverlayScrollbars: 0`): tried, and on macOS all browsers still had scroll bars 0px wide. Chromium and WebKit follow the system setting "Show scroll bars", and Playwright's Firefox hides its scroll bars.
+- Showing Firefox scroll bars with `scrollbar-width: auto !important` together with `ui.useOverlayScrollbars: 0`: tried, and `scrollbar-width` stayed `none`.
 - Changing the macOS setting "Show scroll bars" for each test browser with `defaults write`: every developer would have to do it by hand, and it may not work for headless Chromium.
 - Real classic scroll bars only on Linux, with the classic tests skipped on macOS: classic scroll bars would be checked only in a CI that does not exist yet.
 - A separate Node script that starts Chromium with Playwright for the benchmark: the time limit, the error exit and finding new measurement files would need to be written by hand.

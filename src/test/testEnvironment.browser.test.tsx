@@ -22,6 +22,10 @@ describe('browser test environment', () => {
       <WideTable columns={columns} rows={[{ id: 1, name: 'First' }]} getRowKey={(row) => row.id} />,
     )
 
-    expect(screen.getByRole('table').getBoundingClientRect().width).toBe(250)
+    // The table itself gets its width as an inline style, but the header cell widths come from the real layout
+    const headerCellWidths = screen
+      .getAllByRole('columnheader')
+      .map((headerCell) => headerCell.getBoundingClientRect().width)
+    expect(headerCellWidths).toEqual([100, 150])
   })
 })
