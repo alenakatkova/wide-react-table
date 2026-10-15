@@ -1,7 +1,7 @@
 import axe from 'axe-core'
 
 // WCAG 2.2 adds only AA rules to axe, so there is no `wcag22a` tag
-const wcagLevelAATags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
+const wcagLevelAAndAATags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
 
 // axe cannot run two checks at the same time on one page, so each check waits for the one before it
 let lastAccessibilityCheck: Promise<unknown> = Promise.resolve()
@@ -12,9 +12,17 @@ function describeViolation(violation: axe.Result) {
 }
 
 async function runAccessibilityCheck(element: Element, disabledRule: string | undefined) {
+  const checkedRuleIds = axe.getRules(wcagLevelAAndAATags).map((rule) => rule.ruleId)
+  if (disabledRule && !checkedRuleIds.includes(disabledRule)) {
+    throw new Error(
+      `"${disabledRule}" is not one of the WCAG A and AA rules that this check runs, so turning it off does nothing`,
+    )
+  }
+
   const results = await axe.run(element, {
-    runOnly: { type: 'tag', values: wcagLevelAATags },
+    runOnly: { type: 'tag', values: wcagLevelAAndAATags },
     rules: disabledRule ? { [disabledRule]: { enabled: false } } : {},
+    resultTypes: ['violations'],
   })
 
   // `results.incomplete` is ignored on purpose. It holds cases that axe cannot decide, most often color
