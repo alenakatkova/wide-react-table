@@ -1,10 +1,13 @@
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, onTestFinished } from 'vitest'
 import {
-  canImitateClassicScrollbars,
+  measureScrollbarSizes,
+  OVERLAY_SCROLLBAR_MAX_SIZE,
+} from '../lib/WideTable/useOverlayScrollbarSpace'
+import {
+  canChooseScrollbarMode,
   imitateOverlayScrollbars,
   overlayScrollbarStyleId,
-  verticalScrollbarWidth,
 } from './scrollbars'
 
 function renderScrollingContainer() {
@@ -19,23 +22,31 @@ function renderScrollingContainer() {
   return screen.getByTestId('scrolling-container')
 }
 
-// The order matters: the second test checks what the first one left behind
-describe('scroll bars in browser tests', { shuffle: false }, () => {
-  it('FEAT-004: overlay scroll bars take no space', () => {
+describe('scroll bars in browser tests', () => {
+  it.skipIf(!canChooseScrollbarMode())('FEAT-004: overlay scroll bars take no space', () => {
     imitateOverlayScrollbars()
     const container = renderScrollingContainer()
 
-    expect(verticalScrollbarWidth(container)).toBe(0)
+    expect(measureScrollbarSizes(container).verticalScrollbarWidth).toBeLessThanOrEqual(
+      OVERLAY_SCROLLBAR_MAX_SIZE,
+    )
   })
 
-  // Checks the style element, because in Firefox scroll bars take no space with or without it
-  it('FEAT-004: overlay scroll bars end with their test', () => {
-    expect(document.getElementById(overlayScrollbarStyleId)).toBeNull()
-  })
-
-  it.skipIf(!canImitateClassicScrollbars)('FEAT-004: classic scroll bars take space', () => {
+  it.skipIf(!canChooseScrollbarMode())('FEAT-004: classic scroll bars take space', () => {
     const container = renderScrollingContainer()
 
-    expect(verticalScrollbarWidth(container)).toBeGreaterThan(0)
+    expect(measureScrollbarSizes(container).verticalScrollbarWidth).toBeGreaterThan(
+      OVERLAY_SCROLLBAR_MAX_SIZE,
+    )
+  })
+
+  it('FEAT-004: overlay scroll bars end with their test', () => {
+    // Registered before the helper's own cleanup, so it runs after it: Vitest runs these callbacks in reverse order
+    onTestFinished(() => {
+      expect(document.getElementById(overlayScrollbarStyleId)).toBeNull()
+    })
+    imitateOverlayScrollbars()
+
+    expect(document.getElementById(overlayScrollbarStyleId)).not.toBeNull()
   })
 })

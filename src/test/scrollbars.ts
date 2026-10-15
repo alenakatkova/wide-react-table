@@ -2,8 +2,10 @@ import { onTestFinished } from 'vitest'
 
 // Headless Chromium and WebKit on macOS follow the system setting and show overlay scroll bars, which take no space.
 // CSS gives them the same scroll bars on every system. Playwright's Firefox hides its scroll bars with a browser rule
-// that page CSS cannot override, so Firefox scroll bars always take no space.
-export const canImitateClassicScrollbars = CSS.supports('selector(::-webkit-scrollbar)')
+// that page CSS cannot override, so Firefox scroll bars always take no space, and a test cannot choose the mode.
+export function canChooseScrollbarMode() {
+  return CSS.supports('selector(::-webkit-scrollbar)')
+}
 
 const classicScrollbarSize = '15px'
 const classicScrollbarStyleId = 'imitated-classic-scrollbars'
@@ -32,10 +34,4 @@ export function imitateOverlayScrollbars() {
   const style = addStyle('* { scrollbar-width: none !important; }')
   style.id = overlayScrollbarStyleId
   onTestFinished(() => style.remove())
-}
-
-export function verticalScrollbarWidth(element: HTMLElement) {
-  const { borderLeftWidth, borderRightWidth } = getComputedStyle(element)
-  const bordersWidth = parseFloat(borderLeftWidth) + parseFloat(borderRightWidth)
-  return element.offsetWidth - element.clientWidth - bordersWidth
 }

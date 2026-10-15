@@ -2,7 +2,7 @@ import { configDefaults, defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { playwright } from '@vitest/browser-playwright'
 
-const browserTestFiles = '**/*.browser.test.tsx'
+const browserTestFiles = '**/*.browser.test.{ts,tsx}'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -27,8 +27,11 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            // Playwright starts headless Chromium with this flag, which hides scroll bars. Firefox and WebKit do not get it.
+            // Playwright starts headless Chromium with this flag, which hides even the CSS-styled scroll bars.
+            // Firefox and WebKit do not get it.
             provider: playwright({ launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] } }),
+            // Vitest's default page is 414px wide, so a wide table would make the page itself scroll
+            viewport: { width: 1280, height: 800 },
             instances: [{ browser: 'chromium' }, { browser: 'firefox' }, { browser: 'webkit' }],
           },
         },
