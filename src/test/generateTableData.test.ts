@@ -30,6 +30,16 @@ describe('test data generator', () => {
     }
   })
 
+  it('FEAT-004: gives every number a fractional part', () => {
+    const { columns, rows } = generateTableData({ columnCount: 6, rowCount: 1_000, seed: 1 })
+
+    const numbers = rows
+      .flatMap((row) => columns.map((column) => row[column.key]))
+      .filter((value) => typeof value === 'number')
+    expect(numbers.length).toBeGreaterThan(0)
+    expect(numbers.filter((value) => Number.isInteger(value) || Object.is(value, -0))).toEqual([])
+  })
+
   it('FEAT-004: gives each row its own id', () => {
     const { rows } = generateTableData({ columnCount: 3, rowCount: 200, seed: 1 })
 

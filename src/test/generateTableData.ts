@@ -13,11 +13,9 @@ type ColumnKind = 'text' | 'number' | 'date'
 const columnKinds: ColumnKind[] = ['text', 'number', 'date']
 const emptyCellShare = 0.1
 
-// Cells pick their text and dates from fixed lists, so that they share the same strings.
-// At the scale goal of 500 columns × 100,000 rows, a new string for each cell would use much more memory.
-// Numbers have two decimals on purpose, like real data. Chrome stores such a number in its own small
-// box of about 12 bytes, while a small whole number fits into the row object itself, so decimals
-// use more memory. The benchmark must measure that cost, not hide it.
+// Text and dates come from fixed lists, so cells share strings. Numbers always have decimals,
+// like real data, although Chrome needs more memory for them than for whole numbers.
+// The FEAT-004 notes explain both choices.
 const textValues = [
   'Alpha',
   'Bravo',
@@ -45,7 +43,14 @@ function createCellValue(kind: ColumnKind, random: () => number): GeneratedCellV
   if (random() < emptyCellShare) return null
   if (kind === 'text') return pickFrom(textValues, random)
   if (kind === 'date') return pickFrom(dateValues, random)
-  return Math.round((random() - 0.5) * 2_000_000) / 100
+  return createDecimalNumber(random)
+}
+
+// From -9,999.99 to 9,999.99. The hundredths are never 0, so the number is never whole and never -0.
+function createDecimalNumber(random: () => number) {
+  const wholePart = Math.floor(random() * 20_000) - 10_000
+  const hundredths = 1 + Math.floor(random() * 99)
+  return (wholePart * 100 + hundredths) / 100
 }
 
 /**
