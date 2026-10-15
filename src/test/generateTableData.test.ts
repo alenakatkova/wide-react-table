@@ -50,6 +50,13 @@ describe('test data generator', () => {
     expect(rows).toHaveLength(1)
   })
 
+  it('FEAT-004: rejects a column or row count that is not a whole number of 0 or more', () => {
+    for (const count of [-1, 2.5, Number.NaN]) {
+      expect(() => generateTableData({ columnCount: count, rowCount: 1, seed: 1 })).toThrow()
+      expect(() => generateTableData({ columnCount: 1, rowCount: count, seed: 1 })).toThrow()
+    }
+  })
+
   it('FEAT-004: same seed gives the same data', () => {
     const options = { columnCount: 6, rowCount: 50, seed: 7 }
 

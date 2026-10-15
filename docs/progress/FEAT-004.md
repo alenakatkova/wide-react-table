@@ -51,7 +51,7 @@ PR 4: add the Vitest project `bench` and the `bench` script.
 
 - [x] Add a seeded random number function in `src/test/`.
 - [x] Add the generator of columns and rows for `WideTable`. Each column has one type: text, number or date. Some cells are empty.
-- [x] Unit tests: `FEAT-004: makes the requested columns and rows with text, numbers, dates and empty values`, `FEAT-004: same seed gives the same data` and `FEAT-004: different seed gives different data`. Also `FEAT-004: gives all values of one column the same kind`, `FEAT-004: gives each row its own id`, `FEAT-004: makes no columns and no rows when asked for none` and `FEAT-004: makes one column and one row when asked for one`.
+- [x] Unit tests: `FEAT-004: makes the requested columns and rows with text, numbers, dates and empty values`, `FEAT-004: same seed gives the same data` and `FEAT-004: different seed gives different data`. Also `FEAT-004: gives all values of one column the same kind`, `FEAT-004: gives each row its own id`, `FEAT-004: makes no columns and no rows when asked for none`, `FEAT-004: makes one column and one row when asked for one`, `FEAT-004: rejects a column or row count that is not a whole number of 0 or more`, `FEAT-004: seeded random numbers are from 0 up to, but not including, 1` and `FEAT-004: rejects a seed that is not a whole number from 0 to 2^32 − 1`.
 
 ### PR 4: Benchmark
 
@@ -82,7 +82,7 @@ PR 4: add the Vitest project `bench` and the `bench` script.
 - The tests of the helper check only whether a check passes or fails, where they can, not the text of its message, so a change of wording cannot break them.
 - The axe check covers only the element that is passed in. UI that a later feature draws in a portal, such as a menu in `document.body`, needs its own check. The first feature with a portal decides how.
 - This feature adds rule A-05 to CLAUDE.md: "The library's UI must meet WCAG 2.2 level AA. Each browser test that renders the library's UI runs an axe check, and any violation that axe reports fails the test. When a feature adds UI, its acceptance items say how that UI works with the keyboard."
-- The test data generator makes text, number and date columns in turn. About one cell in ten is empty, as `null`, because `WideTable` shows `null` as an empty cell. Dates are ISO date strings such as `2024-03-15`, not `Date` objects, because `WideTable` shows objects as JSON text. Column types come with FEAT-007. Text values include an empty string, a long text and non-ASCII letters.
+- The test data generator makes text, number and date columns in turn. About one cell in ten is empty, as `null`, because `WideTable` shows `null` as an empty cell. Text columns also have empty strings, so about one text cell in five looks empty. Numbers have two decimals on purpose, like real data, so the benchmark measures their memory cost: Chrome stores a decimal number in its own small box, a small whole number fits into the row object. Dates are ISO date strings such as `2024-03-15`, not `Date` objects, because `WideTable` shows objects as JSON text. Column types come with FEAT-007. Text values include an empty string, a long text and non-ASCII letters.
 - Text and date cells pick their values from fixed lists, so they share the same strings. At the scale goal of 500 × 100,000 cells, a new string for each cell would use much more memory. The unit tests do not run the generator at full scale.
 - The benchmark runs on the developer's laptop, not in CI, because shared CI machines differ in speed from run to run.
 - A frame is dropped when it takes longer than about 16.7ms, which is one frame at 60 frames per second. The scroll goal is no more than 5% dropped frames.
@@ -106,6 +106,7 @@ PR 4: add the Vitest project `bench` and the `bench` script.
 - A guard in the helper that fails with a clear message when the element is no longer on the page: axe already fails in that case, so the guard would only change the message, and no test could show the difference without reading the message.
 - A code comment instead of the axe queue: the queue lets checks overlap safely, for example in `it.concurrent`, without a rule for the caller to remember.
 - Adding browser test types to `tsconfig.app.json` (a planned task in PR 1): not needed, because the browser tests import only `vitest` and Testing Library, which have their own types.
+- Whole numbers instead of decimals in the generated data, to use less memory: real data often has decimals, so the benchmark would show a better result than real use.
 - Moving the axe check of `WideTable` out of `FEAT-004: reads the real size of a rendered element` into its own test: the size test would then render `WideTable` without an axe check, which breaks rule A-05.
 - Measuring scroll bars in the browser tests with the library's own measurement: a bug in it could then hide a problem in the test setup. The tests measure on their own.
 - A separate Edge run: Edge uses the same engine as Chromium, and every machine that runs tests would need Edge installed.

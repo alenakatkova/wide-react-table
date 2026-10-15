@@ -15,6 +15,9 @@ const emptyCellShare = 0.1
 
 // Cells pick their text and dates from fixed lists, so that they share the same strings.
 // At the scale goal of 500 columns × 100,000 rows, a new string for each cell would use much more memory.
+// Numbers have two decimals on purpose, like real data. Chrome stores such a number in its own small
+// box of about 12 bytes, while a small whole number fits into the row object itself, so decimals
+// use more memory. The benchmark must measure that cost, not hide it.
 const textValues = [
   'Alpha',
   'Bravo',
@@ -47,14 +50,23 @@ function createCellValue(kind: ColumnKind, random: () => number): GeneratedCellV
 
 /**
  * Makes columns and rows for `WideTable` tests and the benchmark. Columns take turns being text,
- * number and date columns, and about one cell in ten is empty (`null`). The same seed always
- * gives the same data.
+ * number and date columns, and about one cell in ten is `null`. Text columns also have empty
+ * strings, so about one text cell in five looks empty. The same seed always gives the same data.
  */
 export function generateTableData(options: {
   columnCount: number
   rowCount: number
   seed: number
 }): { columns: WideTableColumn<GeneratedRow>[]; rows: GeneratedRow[] } {
+  for (const [name, count] of [
+    ['columnCount', options.columnCount],
+    ['rowCount', options.rowCount],
+  ] as const) {
+    if (!Number.isInteger(count) || count < 0) {
+      throw new RangeError(`${name} must be a whole number of 0 or more, but it is ${count}`)
+    }
+  }
+
   const random = createSeededRandom(options.seed)
   const columnDefinitions = Array.from({ length: options.columnCount }, (_, columnIndex) => {
     const kind = columnKinds[columnIndex % columnKinds.length]
