@@ -1,4 +1,3 @@
-// With the extension, because the reporter imports this file in Node, where imports need one
 import type { MeasurementResult } from './measure.ts'
 
 export interface MeasurementRow extends MeasurementResult {
