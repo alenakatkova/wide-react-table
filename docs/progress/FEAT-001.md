@@ -25,3 +25,7 @@ Add the `FEAT-001:` prefix to the unit tests that cover acceptance items. The br
 
 - Open question: the unit tests in `maxVisibleHeight` and `overlay scroll bar space` check styles and CSS classes, not the real layout. Do they stay as extra tests, or do the browser tests replace them?
 - Open question: headless browsers hide scroll bars. How can a browser test show that an overlay scroll bar does not cover the content?
+
+## Known problems
+
+- From FEAT-004 (found with the axe check, in Chromium and WebKit): when `WideTable` scrolls, axe reports `scrollable-region-focusable` (serious) for `.wide-table-container`. Keyboard users cannot reach the scroll area, because it does not take focus. A table with no columns has no such problem. The browser tests of this feature run axe, so they must fix it.
