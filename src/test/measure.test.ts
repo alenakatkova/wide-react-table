@@ -52,4 +52,24 @@ describe('measurement', () => {
     await measurement
     expect(callCount).toBe(2)
   })
+
+  it('FEAT-004: a measurement that runs too long tells its running run to stop', async () => {
+    vi.useFakeTimers()
+    onTestFinished(() => {
+      vi.useRealTimers()
+    })
+    const runSignals: AbortSignal[] = []
+    const runThatNeverEnds = (signal: AbortSignal) => {
+      runSignals.push(signal)
+      return new Promise<number>(() => {})
+    }
+
+    const measurement = expect(
+      runMeasurement({ run: runThatNeverEnds, timeLimitMs: 50 }),
+    ).rejects.toThrow()
+    await vi.advanceTimersByTimeAsync(50)
+    await measurement
+    expect(runSignals).toHaveLength(1)
+    expect(runSignals[0].aborted).toBe(true)
+  })
 })

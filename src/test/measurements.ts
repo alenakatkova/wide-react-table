@@ -1,4 +1,4 @@
-import { cleanup, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import type { ReactElement } from 'react'
 
 // One frame at 60 frames per second
@@ -30,28 +30,33 @@ export function getDroppedFrameShare(frameTimes: number[]) {
   return expectedFrameCount === 0 ? 0 : (droppedFrameCount / expectedFrameCount) * 100
 }
 
+// The measurements remove their element with `unmount`, not with `cleanup`, which removes every
+// rendered element: a run that ends after its time limit must not remove the next test's table.
+
 /** Gives the time in milliseconds from the start of the render until the browser has painted it. */
 export async function measureFirstRenderTime(element: ReactElement) {
   await waitForPaint()
   const start = performance.now()
-  render(element)
+  const { unmount } = render(element)
   await waitForPaint()
   const renderTime = performance.now() - start
-  cleanup()
+  unmount()
   return renderTime
 }
 
 /**
  * Renders the element, then scrolls its scroll container at a steady speed from the start to the end
- * in `durationMs`, and gives the share of dropped frames in percent.
+ * in `durationMs`, and gives the share of dropped frames in percent. Stops at the next frame when
+ * `signal` is aborted.
  */
 export async function measureDroppedFramesWhileScrolling(options: {
   element: ReactElement
   findScrollContainer: (renderContainer: HTMLElement) => HTMLElement
   direction: 'down' | 'right'
   durationMs: number
+  signal: AbortSignal
 }) {
-  const { container } = render(options.element)
+  const { container, unmount } = render(options.element)
   const scrollContainer = options.findScrollContainer(container)
   await waitForPaint()
 
@@ -66,7 +71,7 @@ export async function measureDroppedFramesWhileScrolling(options: {
   const startTime = await waitForNextFrame()
   const frameTimes = [startTime]
   let progress = 0
-  while (progress < 1) {
+  while (progress < 1 && !options.signal.aborted) {
     const frameTime = await waitForNextFrame()
     frameTimes.push(frameTime)
     progress = Math.min((frameTime - startTime) / options.durationMs, 1)
@@ -77,6 +82,6 @@ export async function measureDroppedFramesWhileScrolling(options: {
     }
   }
 
-  cleanup()
+  unmount()
   return getDroppedFrameShare(frameTimes)
 }

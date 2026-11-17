@@ -45,12 +45,13 @@ for (const direction of ['down', 'right'] as const) {
     name: `FEAT-004: dropped frames while scrolling ${direction} through ${tableSize}`,
     goal: droppedFrameGoalPercent,
     unit: '%',
-    run: () =>
+    run: (signal) =>
       measureDroppedFramesWhileScrolling({
         element: createTable(),
         findScrollContainer: findTableScrollContainer,
         direction,
         durationMs: 5_000,
+        signal,
       }),
   })
 }

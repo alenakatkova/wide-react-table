@@ -29,29 +29,30 @@ function getMedian(values: number[]) {
 
 /**
  * Calls `run` several times, one after another, and returns the median of the values that it gives.
- * Rejects when all runs together take longer than `timeLimitMs`, and starts no new run after that.
+ * Rejects when all runs together take longer than `timeLimitMs`. Then it starts no new run, and
+ * aborts the signal of the running one, which must stop and must not change the page after that.
  */
 export async function runMeasurement(options: {
-  run: () => Promise<number>
+  run: (signal: AbortSignal) => Promise<number>
   runCount?: number
   timeLimitMs?: number
 }): Promise<number> {
   const runCount = options.runCount ?? measurementRunCount
   const timeLimitMs = options.timeLimitMs ?? measurementTimeLimitMs
-  let isStopped = false
+  const stopController = new AbortController()
   let timeLimitTimer: ReturnType<typeof setTimeout> | undefined
 
   const timeLimit = new Promise<never>((_, reject) => {
     timeLimitTimer = setTimeout(() => {
-      isStopped = true
+      stopController.abort()
       reject(new Error(`The measurement was stopped after ${timeLimitMs / 1000} seconds`))
     }, timeLimitMs)
   })
 
   const allRuns = (async () => {
     const values: number[] = []
-    for (let runIndex = 0; runIndex < runCount && !isStopped; runIndex++) {
-      values.push(await options.run())
+    for (let runIndex = 0; runIndex < runCount && !stopController.signal.aborted; runIndex++) {
+      values.push(await options.run(stopController.signal))
     }
     return getMedian(values)
   })()
@@ -75,13 +76,14 @@ export function assertGoalMet(result: Required<MeasurementResult>) {
 /**
  * Adds a test that runs a measurement 5 times and fails when the median misses the goal.
  * The name must start with the feature id, for example `FEAT-005: first render of 500 columns`.
- * `run` makes one run and gives its value, for example a time in milliseconds.
+ * `run` makes one run and gives its value, for example a time in milliseconds. It stops when its
+ * signal is aborted.
  */
 export function measure(options: {
   name: string
   goal: number
   unit: MeasurementUnit
-  run: () => Promise<number>
+  run: (signal: AbortSignal) => Promise<number>
 }) {
   test(options.name, async ({ task }) => {
     const result: MeasurementResult = { goal: options.goal, unit: options.unit }
