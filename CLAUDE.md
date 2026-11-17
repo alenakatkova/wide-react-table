@@ -16,6 +16,8 @@ A-06 When code turns off a check, a comment next to it says why. This applies to
 
 A-07 Code, test names, comments, commit messages and pull request titles use only characters that are on a normal keyboard: `-` and not `−` or `–`, `x` and not `×`, `->` and not `→`, and straight quotes `"` `'` and not curly ones. Values, such as test data or text that the UI shows, can use any characters.
 
+A-08 A speed measurement goes into a file named `*.bench.tsx` and uses `measure()` from `src/test/measure.ts`. Its name starts with the feature or issue id. `pnpm bench` finds these files by their name, so the benchmark code never lists them.
+
 # Working rules
 
 W-01 Name features and issues by their full id, such as `FEAT-010` or `ISSUE-15`, never by a short form such as "010" or a range such as "018 to 025". In rules and templates, the placeholders are `FEAT-xxx` and `ISSUE-xxx`.
