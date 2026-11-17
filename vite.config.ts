@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react'
 import { playwright } from '@vitest/browser-playwright'
 
 const browserTestFiles = '**/*.browser.test.{ts,tsx}'
+// A pattern, not a list of files, so that a feature adds a measurement without changing this config
+const benchmarkFiles = '**/*.bench.tsx'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -43,6 +45,27 @@ export default defineConfig({
               },
               { browser: 'webkit' },
             ],
+          },
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'bench',
+          include: [benchmarkFiles],
+          setupFiles: ['./src/test/setup.ts', './src/test/setupBenchmark.ts'],
+          // Each measurement stops itself after 60 seconds. This limit only catches a measurement
+          // that does not stop, for example because one run never ends.
+          testTimeout: 70_000,
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright(),
+            viewport: { width: 1280, height: 800 },
+            // A picture of the page does not explain a missed speed goal
+            screenshotFailures: false,
+            // Only Chromium can slow down its CPU through its DevTools connection
+            instances: [{ browser: 'chromium' }],
           },
         },
       },

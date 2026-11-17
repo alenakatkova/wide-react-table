@@ -22,7 +22,7 @@
 
 ## Next step
 
-PR 4: add the Vitest project `bench` and the `bench` script.
+PR 4: decide each known problem, then set `passes` and the status `done`. Then `/pr`.
 
 ## Tasks
 
@@ -55,16 +55,19 @@ PR 4: add the Vitest project `bench` and the `bench` script.
 
 ### PR 4: Benchmark
 
-- [ ] Add the Vitest project `bench`: Chromium only, only `**/*.bench.tsx`. The script `bench` runs `vitest run --project bench`.
-- [ ] Add a browser command that slows the CPU by 2x through Chromium's DevTools connection.
-- [ ] Add the helper `measure({ name, goal, run })`: 5 runs, the median as the result, a stop after 60 seconds, and a failed test when the median misses the goal.
-- [ ] Add the measurements: first render time, and dropped frames during a 5-second steady scroll down and a 5-second steady scroll right. A frame counts as dropped when the time between two frames is longer than about 16.7ms, with a small allowance for timing noise.
-- [ ] Add a reporter that prints the result table: name, median, goal, pass or fail, and the machine's CPU model and memory.
-- [ ] Add the FEAT-004 measurements on a table of 50 × 1,000, made with the generator from PR 3.
-- [ ] Browser test: `FEAT-004: CPU slowdown makes the same work take longer`.
-- [ ] Unit tests: `FEAT-004: the result is the median of 5 runs`, `FEAT-004: the result table shows name, median, goal, pass or fail, CPU and memory`, `FEAT-004: a missed goal fails the measurement`, `FEAT-004: a measurement that runs too long is stopped and fails` and `FEAT-004: a measurement from a new file is found and run`.
-- [ ] Run `pnpm bench` and check that every FEAT-004 measurement is reported.
-- [ ] Set `passes: true` in `docs/features.json` when all tests above pass.
+- [x] Add the Vitest project `bench`: Chromium only, only `**/*.bench.tsx`. The script `bench` runs `vitest run --project bench`.
+- [x] Add a helper that slows the CPU by 2x through Chromium's DevTools connection.
+- [x] Add the helper `measure({ name, goal, run })`: 5 runs, the median as the result, a stop after 60 seconds, and a failed test when the median misses the goal.
+- [x] Add the measurements: first render time, and dropped frames during a 5-second steady scroll down and a 5-second steady scroll right. A frame counts as dropped when the time between two frames is longer than about 16.7ms, with a small allowance for timing noise.
+- [x] Add a reporter that prints the result table: name, median, goal, pass or fail, and the machine's CPU model and memory.
+- [x] Add the FEAT-004 measurements on a table of 50 × 1,000, made with the generator from PR 3.
+- [x] Browser test: `FEAT-004: CPU slowdown makes the same work take longer`.
+- [x] Unit tests: `FEAT-004: the result is the median of 5 runs`, `FEAT-004: the result table shows name, median, goal, pass or fail, CPU and memory`, `FEAT-004: a missed goal fails the measurement` and `FEAT-004: a measurement that runs too long is stopped and fails`. Also `FEAT-004: the median of an even number of runs is the middle of the two middle values`, `FEAT-004: a median equal to the goal meets it`, `FEAT-004: the result table shows a stopped measurement with no median as failed`, and four tests of dropped frames.
+- [x] Instead of the planned unit test `FEAT-004: a measurement from a new file is found and run`: a comment at the file pattern in `vite.config.ts`, and a rule in `CLAUDE.md` about measurement files, in its own `chore/` pull request.
+- [x] Run `pnpm bench` and check that every FEAT-004 measurement is reported.
+- [x] Add a "From FEAT-004:" note in FEAT-005 about the goals of the small table.
+- [ ] **In progress:** decide each known problem: fix now, or move to a GitHub issue.
+- [ ] Set `passes: true` and the status `done` in `docs/features.json` when all tests above pass.
 
 ## Notes
 
@@ -92,7 +95,11 @@ PR 4: add the Vitest project `bench` and the `bench` script.
 - Browser tests must pass headless on Linux, so that a later CI can run them.
 - Browser tests check sizes that come from the code, such as column widths, or compare sizes with each other. They never expect fixed text sizes, because fonts differ between macOS and Linux.
 - Scroll bar mode: on macOS, headless Chromium and WebKit use overlay scroll bars, and no launch setting changes that. So both modes are imitated with CSS. Every browser test has classic scroll bars from `::-webkit-scrollbar` styles with a fixed width, and a test imitates overlay scroll bars with `scrollbar-width: none`. This should work the same on macOS and Linux. Chromium ignores `::-webkit-scrollbar` styles on an element that has `scrollbar-width` or `scrollbar-color`. So if the library CSS ever sets one of them, for example for theming, its elements lose the imitated classic scroll bars, and layout tests of the classic case must be checked again.
-- The benchmark is a Vitest project, so the 60-second limit, the error exit and new measurement files come with Vitest.
+- The benchmark is a Vitest project, so the error exit and new measurement files come with Vitest.
+- The CPU slowdown uses `cdp()` from `vitest/browser`, which sends a command to Chromium's DevTools connection from the test. A custom browser command is not needed.
+- The 60-second limit is in the `measure` helper, which stops starting new runs after it and fails. The `testTimeout` of the `bench` project (70 seconds) only catches a run that never ends.
+- A frame is dropped when the time between two frames, rounded to whole frames, is longer than one frame. So timing noise of less than half a frame drops nothing.
+- The test of a new measurement file was not written: a test that starts Vitest with `createVitest` does not work inside a running Vitest test. Instead, a comment at the pattern in `vite.config.ts` and a rule in `CLAUDE.md` keep the files found by their name.
 
 ## Known problems
 
@@ -120,3 +127,5 @@ PR 4: add the Vitest project `bench` and the `bench` script.
 - Changing the macOS setting "Show scroll bars" for each test browser with `defaults write`: every developer would have to do it by hand, and it may not work for headless Chromium.
 - Real classic scroll bars only on Linux, with the classic tests skipped on macOS: classic scroll bars would be checked only in a CI that does not exist yet.
 - A separate Node script that starts Chromium with Playwright for the benchmark: the time limit, the error exit and finding new measurement files would need to be written by hand.
+- A unit test of the measurement file pattern with Node's `path.matchesGlob`: it uses a different glob engine than Vitest, so it shows only that the pattern looks right. A comment and a rule were chosen instead.
+- Moving the measurements to `src/lib/WideTable/WideTable.bench.tsx`, so that each `pnpm bench` run shows that a file outside the benchmark code is found: not needed together with the comment and the rule.
