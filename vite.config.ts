@@ -26,6 +26,9 @@ export default defineConfig({
           name: 'browser',
           include: [browserTestFiles],
           setupFiles: ['./src/test/setup.ts', './src/test/setupBrowser.ts'],
+          // The CPU slowdown test slows the whole page, so files that run at the same time would slow
+          // each other down, and its own result would change
+          fileParallelism: false,
           browser: {
             enabled: true,
             headless: true,
@@ -58,6 +61,8 @@ export default defineConfig({
           // Above the 60 seconds after which each measurement stops itself, so that its own,
           // clearer message comes first.
           testTimeout: 70_000,
+          // Measurement files that run at the same time share the CPU and slow each other down
+          fileParallelism: false,
           browser: {
             enabled: true,
             headless: true,
