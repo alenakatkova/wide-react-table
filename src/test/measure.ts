@@ -30,7 +30,7 @@ function getMedian(values: number[]) {
 /**
  * Calls `run` several times, one after another, and returns the median of the values that it gives.
  * Rejects when all runs together take longer than `timeLimitMs`. Then it starts no new run, and
- * aborts the signal of the running one, which must stop and must not change the page after that.
+ * aborts the signal of the running one, which must stop and must not change other elements on the page.
  */
 export async function runMeasurement(options: {
   run: (signal: AbortSignal) => Promise<number>
