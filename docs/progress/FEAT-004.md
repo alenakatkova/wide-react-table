@@ -22,7 +22,7 @@
 
 ## Next step
 
-All tasks are done. Open the pull request for PR 4 with `/pr`, and the rule A-08 from the branch `chore/benchmark-file-rule`.
+All tasks are done. Update the pull request for PR 4 with `/pr`. Then open the pull request for rule A-08 from the branch `chore/bench-and-naming-rules`.
 
 ## Tasks
 
@@ -62,7 +62,8 @@ All tasks are done. Open the pull request for PR 4 with `/pr`, and the rule A-08
 - [x] Add a reporter that prints the result table: name, median, goal, pass or fail, and the machine's CPU model and memory.
 - [x] Add the FEAT-004 measurements on a table of 50 × 1,000, made with the generator from PR 3.
 - [x] Browser test: `FEAT-004: CPU slowdown makes the same work take longer`.
-- [x] Unit tests: `FEAT-004: the result is the median of 5 runs`, `FEAT-004: the result table shows name, median, goal, pass or fail, CPU and memory`, `FEAT-004: a missed goal fails the measurement` and `FEAT-004: a measurement that runs too long is stopped and fails`. Also `FEAT-004: the median of an even number of runs is the middle of the two middle values`, `FEAT-004: a median equal to the goal meets it`, `FEAT-004: the result table shows a stopped measurement with no median as failed`, and four tests of dropped frames.
+- [x] Unit tests: `FEAT-004: the result is the median of 5 runs`, `FEAT-004: the result table shows name, median, goal, pass or fail, CPU and memory`, `FEAT-004: a missed goal fails the measurement` and `FEAT-004: a measurement that runs too long is stopped and fails`. Also `FEAT-004: the median of an even number of runs is the middle of the two middle values`, `FEAT-004: a median equal to the goal meets it`, `FEAT-004: the result table shows a stopped measurement with no median as failed`, `FEAT-004: a measurement that runs too long tells its running run to stop`, and four tests of dropped frames.
+- [x] Browser tests: `FEAT-004: a stopped scroll measurement ends before its scroll time`, `FEAT-004: a scroll measurement removes only its own table` and `FEAT-004: a first render measurement removes only its own table`.
 - [x] Instead of the planned unit test `FEAT-004: a measurement from a new file is found and run`: a comment at the file pattern in `vite.config.ts`, and a rule in `CLAUDE.md` about measurement files, in its own `chore/` pull request.
 - [x] Run `pnpm bench` and check that every FEAT-004 measurement is reported.
 - [x] Add a "From FEAT-004:" note in FEAT-005 about the goals of the small table.
@@ -96,8 +97,9 @@ All tasks are done. Open the pull request for PR 4 with `/pr`, and the rule A-08
 - Browser tests check sizes that come from the code, such as column widths, or compare sizes with each other. They never expect fixed text sizes, because fonts differ between macOS and Linux.
 - Scroll bar mode: on macOS, headless Chromium and WebKit use overlay scroll bars, and no launch setting changes that. So both modes are imitated with CSS. Every browser test has classic scroll bars from `::-webkit-scrollbar` styles with a fixed width, and a test imitates overlay scroll bars with `scrollbar-width: none`. This should work the same on macOS and Linux. Chromium ignores `::-webkit-scrollbar` styles on an element that has `scrollbar-width` or `scrollbar-color`. So if the library CSS ever sets one of them, for example for theming, its elements lose the imitated classic scroll bars, and layout tests of the classic case must be checked again.
 - The benchmark is a Vitest project, so the error exit and new measurement files come with Vitest.
+- The `bench` project runs its files one after another (`fileParallelism: false`). Vitest runs browser test files at the same time by default, and measurements that run at the same time share the CPU. The `browser` project does the same, because the CPU slowdown applies to the whole page: once, `FEAT-004: CPU slowdown makes the same work take longer` failed while other files ran at the same time. With one file at a time, the browser tests are not slower.
 - The CPU slowdown uses `cdp()` from `vitest/browser`, which sends a command to Chromium's DevTools connection from the test. A custom browser command is not needed.
-- The 60-second limit is in the `measure` helper, which stops starting new runs after it and fails. The helper also stops a run that never ends. The `testTimeout` of the `bench` project is 70 seconds, because Vitest's default of 15 seconds in browser mode would stop the scroll measurements, which take about 33 seconds.
+- The 60-second limit is in the `measure` helper. After it, the helper starts no new run, fails, and aborts the `AbortSignal` that it gave to the running run. The scroll measurement then stops at its next frame. A run that ignores the signal goes on in the background, but the test has already failed. The measurements remove their table with `unmount`, not with `cleanup`, so a run that ends late never removes the next test's table. The `testTimeout` of the `bench` project is 70 seconds, because Vitest's default of 15 seconds in browser mode would stop the scroll measurements, which take about 33 seconds.
 - A frame is dropped when the time between two frames, rounded to whole frames, is longer than one frame. So timing noise of less than half a frame drops nothing.
 - The test of a new measurement file was not written: a test that starts Vitest with `createVitest` does not work inside a running Vitest test. Instead, a comment at the pattern in `vite.config.ts` and a rule in `CLAUDE.md` keep the files found by their name.
 - `passes: true`, although the item "A later feature can add a measurement with its own name and goal without changing the benchmark code" has no test. The comment and rule A-08 were decided to be enough for it. Every other item has a passing test.
