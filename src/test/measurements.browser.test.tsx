@@ -1,19 +1,38 @@
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
-import { measureDroppedFramesWhileScrolling, measureFirstRenderTime } from './measurements'
+import { describe, expect, it, vi } from 'vitest'
+import {
+  getRenderedTopElement,
+  measureDroppedFramesWhileScrolling,
+  measureFirstRenderTime,
+} from './measurements'
 
 const scrollBox = (
-  <div style={{ width: 200, height: 100, overflow: 'auto' }}>
+  <div data-testid="scroll-box" style={{ width: 200, height: 100, overflow: 'auto' }}>
     <div style={{ width: 200, height: 1_000 }} />
   </div>
 )
 
-function findScrollBox(renderContainer: HTMLElement) {
-  const scrollContainer = renderContainer.firstElementChild
-  if (!(scrollContainer instanceof HTMLElement)) {
-    throw new Error('The scroll box was not rendered')
+function blockPage(durationMs: number) {
+  const endTime = performance.now() + durationMs
+  while (performance.now() < endTime) {
+    // Keeps the page busy, like a slow layout
   }
-  return scrollContainer
+}
+
+// The scroll step to the end keeps the page busy, as if the browser needed long to draw it. A scroll
+// handler cannot do this: the browser runs it only in the frame after the scroll step.
+function findScrollBoxWithSlowLastScrollStep(renderContainer: HTMLElement) {
+  const box = getRenderedTopElement(renderContainer)
+  const scrollTopSetter = Object.getOwnPropertyDescriptor(Element.prototype, 'scrollTop')?.set
+  Object.defineProperty(box, 'scrollTop', {
+    set: (value: number) => {
+      scrollTopSetter?.call(box, value)
+      if (value >= box.scrollHeight - box.clientHeight) {
+        blockPage(100)
+      }
+    },
+  })
+  return box
 }
 
 describe('measurements', () => {
@@ -22,10 +41,13 @@ describe('measurements', () => {
     const stopController = new AbortController()
     const measurement = measureDroppedFramesWhileScrolling({
       element: scrollBox,
-      findScrollContainer: findScrollBox,
+      findScrollContainer: getRenderedTopElement,
       direction: 'down',
       durationMs: 60_000,
       signal: stopController.signal,
+    })
+    await vi.waitFor(() => {
+      expect(screen.getByTestId('scroll-box').scrollTop).toBeGreaterThan(0)
     })
 
     stopController.abort()
@@ -33,10 +55,23 @@ describe('measurements', () => {
     await expect(measurement).resolves.toEqual(expect.any(Number))
   }, 2_000)
 
+  it('FEAT-004: a slow last scroll step counts as dropped frames', async () => {
+    const droppedFrameShare = await measureDroppedFramesWhileScrolling({
+      element: scrollBox,
+      findScrollContainer: findScrollBoxWithSlowLastScrollStep,
+      direction: 'down',
+      durationMs: 300,
+      signal: new AbortController().signal,
+    })
+
+    // About 6 of about 24 frames are dropped while the page is blocked for 100ms
+    expect(droppedFrameShare).toBeGreaterThan(10)
+  })
+
   it('FEAT-004: a scroll measurement removes only its own table', async () => {
     const measurement = measureDroppedFramesWhileScrolling({
       element: scrollBox,
-      findScrollContainer: findScrollBox,
+      findScrollContainer: getRenderedTopElement,
       direction: 'down',
       durationMs: 100,
       signal: new AbortController().signal,

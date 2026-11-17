@@ -1,7 +1,11 @@
 import { WideTable } from '../lib'
 import { generateTableData } from './generateTableData'
 import { measure } from './measure'
-import { measureDroppedFramesWhileScrolling, measureFirstRenderTime } from './measurements'
+import {
+  getRenderedTopElement,
+  measureDroppedFramesWhileScrolling,
+  measureFirstRenderTime,
+} from './measurements'
 
 // The table has no virtual rendering yet, so it is measured at a small size.
 // The full-scale goals come with FEAT-005.
@@ -25,14 +29,6 @@ function createTable() {
   )
 }
 
-function findTableScrollContainer(renderContainer: HTMLElement) {
-  const scrollContainer = renderContainer.firstElementChild
-  if (!(scrollContainer instanceof HTMLElement)) {
-    throw new Error('The table has no scroll container')
-  }
-  return scrollContainer
-}
-
 measure({
   name: `FEAT-004: first render of ${tableSize}`,
   goal: firstRenderGoalMs,
@@ -48,7 +44,8 @@ for (const direction of ['down', 'right'] as const) {
     run: (signal) =>
       measureDroppedFramesWhileScrolling({
         element: createTable(),
-        findScrollContainer: findTableScrollContainer,
+        // `WideTable` renders its scroll container as its top element
+        findScrollContainer: getRenderedTopElement,
         direction,
         durationMs: 5_000,
         signal,

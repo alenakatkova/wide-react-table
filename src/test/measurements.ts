@@ -30,6 +30,15 @@ export function getDroppedFrameShare(frameTimes: number[]) {
   return expectedFrameCount === 0 ? 0 : (droppedFrameCount / expectedFrameCount) * 100
 }
 
+/** Gives the top element that a render put into its container, for example a table's scroll container. */
+export function getRenderedTopElement(renderContainer: HTMLElement) {
+  const renderedTopElement = renderContainer.firstElementChild
+  if (!(renderedTopElement instanceof HTMLElement)) {
+    throw new Error('The render put no element into its container')
+  }
+  return renderedTopElement
+}
+
 // The measurements remove their element with `unmount`, not with `cleanup`, which removes every
 // rendered element: a run that ends after its time limit must not remove the next test's table.
 
@@ -80,6 +89,10 @@ export async function measureDroppedFramesWhileScrolling(options: {
     } else {
       scrollContainer.scrollLeft = progress * scrollDistance
     }
+  }
+  // The browser draws the last scroll step after the loop, and a slow draw delays the next frame
+  if (!options.signal.aborted) {
+    frameTimes.push(await waitForNextFrame())
   }
 
   unmount()
