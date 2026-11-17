@@ -54,8 +54,9 @@ export default defineConfig({
           name: 'bench',
           include: [benchmarkFiles],
           setupFiles: ['./src/test/setup.ts', './src/test/setupBenchmark.ts'],
-          // Each measurement stops itself after 60 seconds. This limit only catches a measurement
-          // that does not stop, for example because one run never ends.
+          // The default of 15 seconds would stop a measurement of 5 runs with a 5-second scroll.
+          // Above the 60 seconds after which each measurement stops itself, so that its own,
+          // clearer message comes first.
           testTimeout: 70_000,
           browser: {
             enabled: true,
