@@ -16,7 +16,7 @@ A-06 When code turns off a check, a comment next to it says why. This applies to
 
 A-07 Code, test names, comments, commit messages and pull request titles use only characters that are on a normal keyboard: `-` and not `−` or `–`, `x` and not `×`, `->` and not `→`, and straight quotes `"` `'` and not curly ones. Values, such as test data or text that the UI shows, can use any characters.
 
-A-08 A speed measurement goes into a file named `*.bench.tsx` and uses `measure()` from `src/test/measure.ts`. Its name starts with the feature or issue id. `pnpm bench` finds these files by their name, so the benchmark code never lists them.
+A-08 A speed measurement goes into a file named `*.bench.tsx` and uses `measure()` from `src/test/measure.ts`. Its name starts with the feature or issue id. `pnpm bench` finds these files by their name, so the benchmark code never lists them. Rule A-05 does not apply to these files: they run no axe check, because axe is slow on large tables and would change the timing. The browser tests check the same UI.
 
 # Working rules
 
