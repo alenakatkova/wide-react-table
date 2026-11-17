@@ -22,7 +22,7 @@
 
 ## Next step
 
-PR 4: decide each known problem, then set `passes` and the status `done`. Then `/pr`.
+All tasks are done. Open the pull request for PR 4 with `/pr`, and the rule A-08 from the branch `chore/benchmark-file-rule`.
 
 ## Tasks
 
@@ -66,8 +66,8 @@ PR 4: decide each known problem, then set `passes` and the status `done`. Then `
 - [x] Instead of the planned unit test `FEAT-004: a measurement from a new file is found and run`: a comment at the file pattern in `vite.config.ts`, and a rule in `CLAUDE.md` about measurement files, in its own `chore/` pull request.
 - [x] Run `pnpm bench` and check that every FEAT-004 measurement is reported.
 - [x] Add a "From FEAT-004:" note in FEAT-005 about the goals of the small table.
-- [ ] **In progress:** decide each known problem: fix now, or move to a GitHub issue.
-- [ ] Set `passes: true` and the status `done` in `docs/features.json` when all tests above pass.
+- [x] Decide each known problem: the axe problem of `WideTable` moved to FEAT-001's progress file, and the check on Linux moved to FEAT-030's progress file.
+- [x] Set `passes: true` and the status `done` in `docs/features.json` when all tests above pass.
 
 ## Notes
 
@@ -100,11 +100,7 @@ PR 4: decide each known problem, then set `passes` and the status `done`. Then `
 - The 60-second limit is in the `measure` helper, which stops starting new runs after it and fails. The `testTimeout` of the `bench` project (70 seconds) only catches a run that never ends.
 - A frame is dropped when the time between two frames, rounded to whole frames, is longer than one frame. So timing noise of less than half a frame drops nothing.
 - The test of a new measurement file was not written: a test that starts Vitest with `createVitest` does not work inside a running Vitest test. Instead, a comment at the pattern in `vite.config.ts` and a rule in `CLAUDE.md` keep the files found by their name.
-
-## Known problems
-
-- FEAT-001 (found with the new axe check, in Chromium and WebKit): when `WideTable` scrolls, axe reports `scrollable-region-focusable` (serious) for `.wide-table-container`. Keyboard users cannot reach the scroll area, because it does not take focus. A table with no columns has no such problem. Decided: it stays for FEAT-001, whose browser tests will run axe and must fix it. Move this note to FEAT-001's progress file when its plan is redone.
-- The browser tests have run only on macOS. On Linux, it is not checked yet that the imitated classic scroll bars work in headless Chromium and WebKit. The first CI run (FEAT-030) will show it.
+- `passes: true`, although the item "A later feature can add a measurement with its own name and goal without changing the benchmark code" has no test. The comment and rule A-08 were decided to be enough for it. Every other item has a passing test.
 
 ## Rejected approaches
 
