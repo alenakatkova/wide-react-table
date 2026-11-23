@@ -28,7 +28,15 @@ function getMedian(values: number[]) {
 }
 
 /**
- * Calls `run` several times, one after another, and returns the median of the values that it gives.
+ * Calls `run` several times, one after another, and returns the median of the values that the runs
+ * return.
+ *
+ * The median, not the average: other work on the machine, such as garbage collection or another
+ * program, can make a run slower, but nothing can make it faster than the code allows. The average
+ * counts each slow run in full, so one unlucky run can move it a lot. The median is the middle value
+ * after sorting, so one or two unusual runs do not change it. A real slowdown makes every run slower,
+ * so it still moves the median.
+ *
  * Rejects when all runs together take longer than `timeLimitMs`. Then it starts no new run, and
  * aborts the signal of the running one, which must stop and must not change other elements on the page.
  */
