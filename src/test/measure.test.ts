@@ -1,19 +1,19 @@
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
 import { assertGoalMet, measurementRunCount, runMeasurement } from './measure'
 
-function createRunThatGives(values: number[]) {
-  const remainingValues = [...values]
+function createFakeRunWithResults(results: number[]) {
+  const remainingResults = [...results]
   let callCount = 0
   const run = () => {
     callCount++
-    return Promise.resolve(remainingValues.shift() ?? Number.NaN)
+    return Promise.resolve(remainingResults.shift() ?? Number.NaN)
   }
   return { run, getCallCount: () => callCount }
 }
 
 describe('measurement', () => {
   it('FEAT-004: the result is the median of 5 runs', async () => {
-    const { run, getCallCount } = createRunThatGives([50, 10, 40, 20, 30])
+    const { run, getCallCount } = createFakeRunWithResults([50, 10, 40, 20, 30])
 
     await expect(runMeasurement({ run })).resolves.toBe(30)
     expect(measurementRunCount).toBe(5)
@@ -21,7 +21,7 @@ describe('measurement', () => {
   })
 
   it('FEAT-004: the median of an even number of runs is the middle of the two middle values', async () => {
-    const { run } = createRunThatGives([40, 10, 30, 20])
+    const { run } = createFakeRunWithResults([40, 10, 30, 20])
 
     await expect(runMeasurement({ run, runCount: 4 })).resolves.toBe(25)
   })
