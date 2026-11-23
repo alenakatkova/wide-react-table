@@ -15,7 +15,7 @@
 
 ## Next step
 
-PR 3: delete the unit tests in "column widths" and "maxVisibleHeight", and the helper `getColWidths`.
+PR 3 is done: open its pull request with `/pr`. Then PR 4: add the browser tests for overlay and classic scroll bars.
 
 ## Tasks
 
@@ -38,8 +38,8 @@ PR 3: delete the unit tests in "column widths" and "maxVisibleHeight", and the h
 - [x] Add `src/lib/WideTable/WideTable.browser.test.tsx` with one helper that runs the axe check with only `scrollable-region-focusable` turned off. Its comment names FEAT-024 (rule A-06).
 - [x] Browser tests, each with the axe check: `FEAT-001: each column uses its own width or the default width` (with `width` and with `defaultColumnWidth`), `FEAT-001: columns without a width are 100 px wide when no default width is given`, `FEAT-001: the table width is the sum of the column widths`, `FEAT-001: with maxVisibleHeight in pixels, the rows scroll inside the container`, `FEAT-001: with maxVisibleHeight as a CSS length, the rows scroll inside the container` (`50vh` gives 400 px on the test page of 1280 x 800), `FEAT-001: the header stays visible while the rows scroll`, `FEAT-001: columns wider than the container scroll right inside it, and the page does not scroll`, `FEAT-001: each header cell stays above its column while the table scrolls right` and `FEAT-001: a value longer than its column is cut with an ellipsis, and the column keeps its width`.
 - [x] Unit tests: rename "shows a message instead of the table when there are no columns" to `FEAT-001: a table with no columns shows a "No columns" message`, and add `FEAT-001: a table with columns but no rows shows only its header`.
-- [ ] **In progress:** Delete the 3 unit tests in "column widths", the 3 in "maxVisibleHeight", and the helper `getColWidths`.
-- [ ] Fix any layout bug that the new tests find.
+- [x] Delete the 3 unit tests in "column widths", the 3 in "maxVisibleHeight", and the helper `getColWidths`.
+- [x] Fix any layout bug that the new tests find. The tests found none.
 
 ### PR 4: Browser tests for the scroll bar space
 
