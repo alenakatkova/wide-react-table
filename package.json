@@ -13,6 +13,7 @@
     "test": "vitest --project unit",
     "test:run": "vitest run --project unit",
     "test:browser": "vitest run --project browser",
+    "bench": "vitest run --project bench --reporter=default --reporter=./src/test/benchmarkReporter.ts",
     "browsers:install": "playwright install chromium webkit"
   },
   "dependencies": {

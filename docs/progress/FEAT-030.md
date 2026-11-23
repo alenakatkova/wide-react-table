@@ -11,3 +11,4 @@
 - `/pr merge` waits until the CI checks pass on GitHub.
 - To decide in `/grill`: one job per browser, run in parallel. This costs nothing on a public repository, and the free plan runs up to 20 jobs at once. Each job repeats the setup, so the run uses more minutes, but it finishes sooner.
 - Publishing to npm from CI is not part of this feature. It belongs to the library build and package feature.
+- From FEAT-004: the browser tests have run only on macOS. On Linux, it is not checked yet that the imitated classic scroll bars work in headless Chromium and WebKit. The first CI run shows it. If a test fails there, this feature fixes it before CI blocks merges. ISSUE-15 is a related check of the cell widths.
