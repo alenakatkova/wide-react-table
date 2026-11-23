@@ -15,7 +15,7 @@
 
 ## Next step
 
-PR 3 is done: open its pull request with `/pr`. Then PR 4: add the browser tests for overlay and classic scroll bars.
+PR 4: add the browser tests for overlay and classic scroll bars.
 
 ## Tasks
 
@@ -54,7 +54,7 @@ PR 3 is done: open its pull request with `/pr`. Then PR 4: add the browser tests
 - The overlay test uses the FEAT-004 helper `imitateOverlayScrollbars()`, which gives scroll bars of 0 px, so `WideTable` adds its space. 15 px is the widest overlay scroll bar in Chrome and Safari on macOS.
 - There is no speed item. The scale goal of 500 columns x 100,000 rows needs virtual rendering, which comes with FEAT-005.
 - Not part of this feature: a way for sighted users to see the full value of cut text, and a "No rows" message.
-- The page does not expose whether the browser drew the "...". So the ellipsis test checks that the text is wider than its cell, and that the cell's computed `text-overflow` is `ellipsis`.
+- The page does not expose whether the browser drew the "...". So the ellipsis test checks that the text is wider than its cell, and that the cell's computed `overflow-x` is `hidden` and its `text-overflow` is `ellipsis`. The browser draws the ellipsis only when both are set.
 - After PR 4, no test checks that a table that does not scroll gets no extra space for scroll bars. One of the deleted unit tests covered this case.
 - The fallback width of 100 px has its own browser test, apart from the test of `width` and `defaultColumnWidth`, so that each test checks one behavior.
 - The browser tests that scroll first check that the scroll position really changed. Without this check, the header test passed even when the container could not scroll, because the header was then at the top anyway.
