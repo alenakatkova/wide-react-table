@@ -105,8 +105,7 @@ describe('WideTable layout', () => {
     })
 
     const scrollContainer = getScrollContainer()
-    // The test page is 800 px high
-    expect(scrollContainer.getBoundingClientRect().height).toBe(400)
+    expect(scrollContainer.getBoundingClientRect().height).toBe(window.innerHeight / 2)
     scrollContainer.scrollTop = 100
     expect(scrollContainer.scrollTop).toBe(100)
     await expectNoAccessibilityViolationsExceptScrollAreaFocus(container)
@@ -152,6 +151,7 @@ describe('WideTable layout', () => {
 
     const headerCells = screen.getAllByRole('columnheader')
     const firstRowCells = screen.getAllByRole('row')[1].querySelectorAll('td')
+    expect(firstRowCells).toHaveLength(headerCells.length)
     headerCells.forEach((headerCell, columnIndex) => {
       const headerCellBox = headerCell.getBoundingClientRect()
       const bodyCellBox = firstRowCells[columnIndex].getBoundingClientRect()
