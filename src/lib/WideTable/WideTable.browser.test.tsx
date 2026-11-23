@@ -19,15 +19,15 @@ function createColumns(count: number): WideTableColumn<Row>[] {
 
 function createRows(columns: readonly WideTableColumn<Row>[], count: number): Row[] {
   return Array.from({ length: count }, (_, rowIndex) => ({
-    id: rowIndex,
     ...Object.fromEntries(columns.map((column) => [column.key, `Value ${rowIndex}`])),
+    // After the cell values, so that a column with the key `id` does not replace the row key
+    id: rowIndex,
   }))
 }
 
 function renderTable(props: Pick<WideTableProps<Row>, 'columns'> & Partial<WideTableProps<Row>>) {
-  return render(
-    <WideTable<Row> rows={createRows(props.columns, 3)} getRowKey={(row) => row.id} {...props} />,
-  )
+  const { rows = createRows(props.columns, 3), ...otherProps } = props
+  return render(<WideTable<Row> rows={rows} getRowKey={(row) => row.id} {...otherProps} />)
 }
 
 // The element that scrolls has no role of its own, so the test finds it as the parent of the table
@@ -170,6 +170,8 @@ describe('WideTable layout', () => {
 
     const cell = screen.getByRole('cell')
     expect(cell.scrollWidth).toBeGreaterThan(cell.clientWidth)
+    // The browser draws the ellipsis only when the cell also hides the text that does not fit
+    expect(getComputedStyle(cell).overflowX).toBe('hidden')
     expect(getComputedStyle(cell).textOverflow).toBe('ellipsis')
     expect(getHeaderCellWidths()).toEqual([80])
     await expectNoAccessibilityViolationsExceptScrollAreaFocus(container)
