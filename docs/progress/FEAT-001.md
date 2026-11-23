@@ -43,7 +43,7 @@ PR 4: add the browser tests for overlay and classic scroll bars.
 
 ### PR 4: Browser tests for the scroll bar space
 
-- [ ] Browser tests, each with the axe check: `FEAT-001: overlay scroll bars leave at least 15 px free after the last column and the last row` (with `imitateOverlayScrollbars()`, scrolled to the end in both directions) and `FEAT-001: classic scroll bars get no extra space next to them`. They wait one frame after the render before they measure: `useOverlayScrollbarSpace` adds its space from a `ResizeObserver`, which calls back only when the browser draws the next frame.
+- [ ] Browser tests, each with the axe check: `FEAT-001: overlay scroll bars leave at least 15 px free after the last column and the last row` (with `imitateOverlayScrollbars()`, scrolled to the end in both directions) and `FEAT-001: classic scroll bars get no extra space next to them`. They wait until the browser has drawn two frames after the render before they measure. `useOverlayScrollbarSpace` adds its space from a `ResizeObserver`: in a frame, the browser runs frame callbacks first and `ResizeObserver` callbacks after them, and React adds the padding class even later. So after one frame, the space does not exist yet.
 - [ ] Delete the 4 unit tests in "overlay scroll bar space", `mockContainerLayout`, and the style that the test file adds for the container border.
 - [ ] Fix any bug that the new tests find.
 - [ ] Set `passes: true` and the status `done` in `docs/features.json`.
