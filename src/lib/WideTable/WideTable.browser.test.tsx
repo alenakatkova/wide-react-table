@@ -30,7 +30,7 @@ function renderTable(props: Pick<WideTableProps<Row>, 'columns'> & Partial<WideT
   )
 }
 
-// The element that scrolls is the parent of the table. It has no role of its own until FEAT-024.
+// The element that scrolls has no role of its own, so the test finds it as the parent of the table
 function getScrollContainer() {
   const scrollContainer = screen.getByRole('table').parentElement
   if (!scrollContainer) {
