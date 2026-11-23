@@ -86,11 +86,19 @@ describe('WideTable', () => {
     expect(screen.getByRole('cell', { name: '25' })).toBeInTheDocument()
   })
 
-  it('shows a message instead of the table when there are no columns', () => {
+  it('FEAT-001: a table with no columns shows a "No columns" message', () => {
     render(<WideTable<TestRow> columns={[]} rows={rows} getRowKey={(row) => row.id} />)
 
     expect(screen.getByText('No columns')).toBeInTheDocument()
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
+  })
+
+  it('FEAT-001: a table with columns but no rows shows only its header', () => {
+    render(<WideTable<TestRow> columns={columns} rows={[]} getRowKey={(row) => row.id} />)
+
+    expect(screen.getAllByRole('columnheader')).toHaveLength(columns.length)
+    expect(screen.getAllByRole('row')).toHaveLength(1)
+    expect(screen.queryAllByRole('cell')).toHaveLength(0)
   })
 
   describe('column widths', () => {
