@@ -15,7 +15,7 @@
 
 ## Next step
 
-PR 3: add `src/lib/WideTable/WideTable.browser.test.tsx` with the helper that runs the axe check with only `scrollable-region-focusable` turned off.
+PR 4: add the browser tests for overlay and classic scroll bars.
 
 ## Tasks
 
@@ -35,15 +35,15 @@ PR 3: add `src/lib/WideTable/WideTable.browser.test.tsx` with the helper that ru
 
 ### PR 3: Browser tests for column widths and scrolling
 
-- [ ] Add `src/lib/WideTable/WideTable.browser.test.tsx` with one helper that runs the axe check with only `scrollable-region-focusable` turned off. Its comment names FEAT-024 (rule A-06).
-- [ ] Browser tests, each with the axe check: `FEAT-001: each column uses its own width or the default width` (with `width`, with `defaultColumnWidth`, and with the fallback of 100 px), `FEAT-001: the table width is the sum of the column widths`, `FEAT-001: with maxVisibleHeight in pixels, the rows scroll inside the container`, `FEAT-001: with maxVisibleHeight as a CSS length, the rows scroll inside the container` (`50vh` gives 400 px on the test page of 1280 x 800), `FEAT-001: the header stays visible while the rows scroll`, `FEAT-001: columns wider than the container scroll right inside it, and the page does not scroll`, `FEAT-001: each header cell stays above its column while the table scrolls right` and `FEAT-001: a value longer than its column is cut with an ellipsis, and the column keeps its width`.
-- [ ] Unit tests: rename "shows a message instead of the table when there are no columns" to `FEAT-001: a table with no columns shows a "No columns" message`, and add `FEAT-001: a table with columns but no rows shows only its header`.
-- [ ] Delete the 3 unit tests in "column widths", the 3 in "maxVisibleHeight", and the helper `getColWidths`.
-- [ ] Fix any layout bug that the new tests find.
+- [x] Add `src/lib/WideTable/WideTable.browser.test.tsx` with one helper that runs the axe check with only `scrollable-region-focusable` turned off. Its comment names FEAT-024 (rule A-06).
+- [x] Browser tests, each with the axe check: `FEAT-001: each column uses its own width or the default width` (with `width` and with `defaultColumnWidth`), `FEAT-001: columns without a width are 100 px wide when no default width is given`, `FEAT-001: the table width is the sum of the column widths`, `FEAT-001: with maxVisibleHeight in pixels, the rows scroll inside the container`, `FEAT-001: with maxVisibleHeight as a CSS length, the rows scroll inside the container` (`50vh` gives half the height of the test page), `FEAT-001: the header stays visible while the rows scroll`, `FEAT-001: columns wider than the container scroll right inside it, and the page does not scroll`, `FEAT-001: each header cell stays above its column while the table scrolls right` and `FEAT-001: a value longer than its column is cut with an ellipsis, and the column keeps its width`.
+- [x] Unit tests: rename "shows a message instead of the table when there are no columns" to `FEAT-001: a table with no columns shows a "No columns" message`, and add `FEAT-001: a table with columns but no rows shows only its header`.
+- [x] Delete the 3 unit tests in "column widths", the 3 in "maxVisibleHeight", and the helper `getColWidths`.
+- [x] Fix any layout bug that the new tests find. The tests found none.
 
 ### PR 4: Browser tests for the scroll bar space
 
-- [ ] Browser tests, each with the axe check: `FEAT-001: overlay scroll bars leave at least 15 px free after the last column and the last row` (with `imitateOverlayScrollbars()`, scrolled to the end in both directions) and `FEAT-001: classic scroll bars get no extra space next to them`.
+- [ ] Browser tests, each with the axe check: `FEAT-001: overlay scroll bars leave at least 15 px free after the last column and the last row` (with `imitateOverlayScrollbars()`, scrolled to the end in both directions) and `FEAT-001: classic scroll bars get no extra space next to them`. They wait until the browser has drawn two frames after the render before they measure. `useOverlayScrollbarSpace` adds its space from a `ResizeObserver`: in a frame, the browser runs frame callbacks first and `ResizeObserver` callbacks after them, and React adds the padding class even later. So after one frame, the space does not exist yet.
 - [ ] Delete the 4 unit tests in "overlay scroll bar space", `mockContainerLayout`, and the style that the test file adds for the container border.
 - [ ] Fix any bug that the new tests find.
 - [ ] Set `passes: true` and the status `done` in `docs/features.json`.
@@ -54,8 +54,10 @@ PR 3: add `src/lib/WideTable/WideTable.browser.test.tsx` with the helper that ru
 - The overlay test uses the FEAT-004 helper `imitateOverlayScrollbars()`, which gives scroll bars of 0 px, so `WideTable` adds its space. 15 px is the widest overlay scroll bar in Chrome and Safari on macOS.
 - There is no speed item. The scale goal of 500 columns x 100,000 rows needs virtual rendering, which comes with FEAT-005.
 - Not part of this feature: a way for sighted users to see the full value of cut text, and a "No rows" message.
-- The page does not expose whether the browser drew the "...". So the ellipsis test checks that the text is wider than its cell, and that the cell's computed `text-overflow` is `ellipsis`.
+- The page does not expose whether the browser drew the "...". So the ellipsis test checks that the text is wider than its cell, and that the cell's computed `overflow-x` is `hidden` and its `text-overflow` is `ellipsis`. The browser draws the ellipsis only when both are set.
 - After PR 4, no test checks that a table that does not scroll gets no extra space for scroll bars. One of the deleted unit tests covered this case.
+- The fallback width of 100 px has its own browser test, apart from the test of `width` and `defaultColumnWidth`, so that each test checks one behavior.
+- The browser tests that scroll first check that the scroll position really changed. Without this check, the header test passed even when the container could not scroll, because the header was then at the top anyway.
 - Keyboard access to the scroll area is part of FEAT-024. Until then, the FEAT-001 browser tests turn off only the axe rule `scrollable-region-focusable`, with a comment that names FEAT-024, and FEAT-024 turns it back on. FEAT-024 stays `later`, so 1.0 may ship with a scroll area that keyboard users cannot reach.
 
 ## Rejected approaches

@@ -28,10 +28,6 @@ function getContainer(): HTMLElement {
   return container
 }
 
-function getColWidths(): string[] {
-  return Array.from(screen.getByRole('table').querySelectorAll('col')).map((col) => col.style.width)
-}
-
 interface ContainerLayout {
   scrollbarSize: number
   overflowsX: boolean
@@ -86,93 +82,19 @@ describe('WideTable', () => {
     expect(screen.getByRole('cell', { name: '25' })).toBeInTheDocument()
   })
 
-  it('shows a message instead of the table when there are no columns', () => {
+  it('FEAT-001: a table with no columns shows a "No columns" message', () => {
     render(<WideTable<TestRow> columns={[]} rows={rows} getRowKey={(row) => row.id} />)
 
     expect(screen.getByText('No columns')).toBeInTheDocument()
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
   })
 
-  describe('column widths', () => {
-    it('sizes every column with the fallback width when nothing is configured', () => {
-      render(<WideTable<TestRow> columns={columns} rows={rows} getRowKey={(row) => row.id} />)
+  it('FEAT-001: a table with columns but no rows shows only its header', () => {
+    render(<WideTable<TestRow> columns={columns} rows={[]} getRowKey={(row) => row.id} />)
 
-      expect(getColWidths()).toEqual(['100px', '100px', '100px'])
-      expect(screen.getByRole('table')).toHaveStyle({ width: '300px' })
-    })
-
-    it('uses defaultColumnWidth for columns without an explicit width', () => {
-      render(
-        <WideTable<TestRow>
-          columns={columns}
-          rows={rows}
-          getRowKey={(row) => row.id}
-          defaultColumnWidth={80}
-        />,
-      )
-
-      expect(getColWidths()).toEqual(['80px', '80px', '80px'])
-      expect(screen.getByRole('table')).toHaveStyle({ width: '240px' })
-    })
-
-    it('prefers the per-column width and sums it into the table width', () => {
-      const sizedColumns: WideTableColumn<TestRow>[] = [
-        { key: 'id', title: 'ID', width: 50 },
-        { key: 'name', title: 'Name', width: 200 },
-        { key: 'age', title: 'Age' },
-      ]
-
-      render(
-        <WideTable<TestRow>
-          columns={sizedColumns}
-          rows={rows}
-          getRowKey={(row) => row.id}
-          defaultColumnWidth={80}
-        />,
-      )
-
-      expect(getColWidths()).toEqual(['50px', '200px', '80px'])
-      expect(screen.getByRole('table')).toHaveStyle({ width: '330px' })
-    })
-  })
-
-  describe('maxVisibleHeight', () => {
-    it('lets the table grow freely when no height is given', () => {
-      render(<WideTable<TestRow> columns={columns} rows={rows} getRowKey={(row) => row.id} />)
-
-      const container = getContainer()
-      expect(container.style.maxHeight).toBe('')
-      expect(container).not.toHaveClass('wide-table-container--max-height')
-    })
-
-    it('treats a number as pixels and marks the container as having a max height', () => {
-      render(
-        <WideTable<TestRow>
-          columns={columns}
-          rows={rows}
-          getRowKey={(row) => row.id}
-          maxVisibleHeight={400}
-        />,
-      )
-
-      const container = getContainer()
-      expect(container).toHaveStyle({ maxHeight: '400px' })
-      expect(container).toHaveClass('wide-table-container--max-height')
-    })
-
-    it('passes a string height through unchanged', () => {
-      render(
-        <WideTable<TestRow>
-          columns={columns}
-          rows={rows}
-          getRowKey={(row) => row.id}
-          maxVisibleHeight="50vh"
-        />,
-      )
-
-      // jsdom cannot compute viewport units, so read the inline style directly
-      expect(getContainer().style.maxHeight).toBe('50vh')
-    })
+    expect(screen.getAllByRole('columnheader')).toHaveLength(columns.length)
+    expect(screen.getAllByRole('row')).toHaveLength(1)
+    expect(screen.queryAllByRole('cell')).toHaveLength(0)
   })
 
   describe('overlay scroll bar space', () => {
